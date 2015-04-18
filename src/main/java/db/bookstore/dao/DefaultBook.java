@@ -72,13 +72,12 @@ public class DefaultBook implements Book {
         DefaultBook that = (DefaultBook) o;
         return Objects.equal(price, that.price) &&
                 Objects.equal(name, that.name) &&
-                Objects.equal(publicationDate, that.publicationDate) &&
-                Objects.equal(authors, that.authors);
+                Objects.equal(publicationDate, that.publicationDate);
     }
 
     @Override
     public int hashCode() {
-        return hashCode == null ? hashCode = Objects.hashCode(name, publicationDate, price, authors) : hashCode;
+        return hashCode == null ? hashCode = Objects.hashCode(name, publicationDate, price) : hashCode;
     }
 
     @Override

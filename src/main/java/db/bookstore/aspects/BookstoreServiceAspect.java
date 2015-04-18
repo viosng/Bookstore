@@ -22,19 +22,19 @@ public class BookstoreServiceAspect {
 
     @AfterReturning(pointcut = "execution(* db.bookstore.services.BookstoreService.addAuthor(..))", returning = "returnVal")
     public void addAuthor(JoinPoint pjp, Object returnVal) throws Throwable {
-        log.info("Added new author {}", returnVal);
+        log.info("Added new author or returned an existing one :{}", returnVal);
     }
 
     @AfterReturning(pointcut = "execution(* db.bookstore.services.BookstoreService.addBook(..))", returning = "returnVal")
     public void addBook(JoinPoint pjp, Object returnVal) throws Throwable {
-        log.info("Added new book {}", returnVal);
+        log.info("Added new book or returned an existing one : {}", returnVal);
     }
 
     @Around("execution(* db.bookstore.services.BookstoreService.get*(..))")
     public Object getMethods(ProceedingJoinPoint pjp) throws Throwable {
-        log.info("Execution of method is started{}", pjp.getSignature());
+        log.info("Execution of method {} is started", pjp.getSignature().getName());
         Object res = pjp.proceed();
-        log.info("Execution result of method {} is {}", pjp.getSignature(), res);
+        log.info("Execution result of method {} is {}", pjp.getSignature().getName(), res);
         return res;
     }
 }
