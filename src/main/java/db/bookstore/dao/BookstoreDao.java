@@ -102,6 +102,14 @@ public class BookstoreDao {
 
     @NotNull
     public List<Book> getAllBooks() {
+        return getBooks("");
+    }
+
+    public @NotNull List<Book> getBooksOfAuthor(@NotNull Author author) {
+        return getBooks(" WHERE BOOKS.ID IN (SELECT BOOK_ID FROM AUTHORITY WHERE AUTHOR_ID = " + author.getId() + ")");
+    }
+
+    private List<Book> getBooks(String whereClause) {
         String query =
                 "SELECT AUTHORS.ID AID, AUTHORS.NAME ANAME, AUTHORS.BIRTH_DATE, AUTHORS.DEATH_DATE, " +
                         " BOOKS.ID BID, BOOKS.NAME BNAME, BOOKS.PRICE, BOOKS.PUBLICATION_DATE FROM " +
@@ -109,6 +117,7 @@ public class BookstoreDao {
                         "        ON AUTHORS.ID = AUTHORITY.AUTHOR_ID " +
                         "        INNER JOIN BOOKS " +
                         "            ON BOOKS.ID = AUTHORITY.BOOK_ID ";
+        query += whereClause;
         RowMapper<Author> authorRowMapper =
                 authorRowMapper("AID", "ANAME", "BIRTH_DATE", "DEATH_DATE");
         List<Pair<Book, Author>> resultSets = jdbcTemplate.query(query, (rs, rowNum) -> {
@@ -120,7 +129,6 @@ public class BookstoreDao {
                     Collections.<Author>emptySet());
             return new Pair<>(book, authorRowMapper.mapRow(rs, 0));
         });
-
 
         Map<Book, Set<Author>> bookSetMap = resultSets.stream().collect(Collectors.groupingBy(new Function<Pair<Book, Author>, Book>() {
             @Override

@@ -1,6 +1,8 @@
 package db.bookstore.services;
 
-import db.bookstore.dao.*;
+import db.bookstore.dao.Author;
+import db.bookstore.dao.Book;
+import db.bookstore.dao.BookstoreDao;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +42,15 @@ public class BookstoreService {
         return dao.getAllBooks();
     }
 
+    public @NotNull List<Book> getBooksOfAuthor(@NotNull Author author) {
+        return dao.getBooksOfAuthor(author);
+    }
+
     public @NotNull List<Book> getBooksWithPriceMoreThan(double price) {
+        return Collections.emptyList();
+    }
+
+    public @NotNull List<Book> getBooksWithPriceLessThan(double price) {
         return Collections.emptyList();
     }
 
@@ -55,16 +66,16 @@ public class BookstoreService {
         return Collections.emptyList();
     }
 
-    public @NotNull List<Book> getFilteredBooks(@NotNull Filter<Book> bookFilter) {
-        return Collections.<Book>emptyList().stream().filter(bookFilter::filter).collect(Collectors.toList());
+    public @NotNull List<Book> getFilteredBooks(@NotNull Predicate<Book> bookFilter) {
+        return getAllBooks().stream().filter(bookFilter).collect(Collectors.toList());
     }
 
     public @NotNull List<Author> getAllAuthors() {
         return dao.getAllAuthors();
     }
 
-    public @NotNull List<Author> getFilteredAuthors(@NotNull Filter<Author> authorFilter) {
-        return Collections.<Author>emptyList().stream().filter(authorFilter::filter).collect(Collectors.toList());
+    public @NotNull List<Author> getFilteredAuthors(@NotNull Predicate<Author> authorFilter) {
+        return getAllAuthors().stream().filter(authorFilter).collect(Collectors.toList());
     }
 
 }
