@@ -36,7 +36,7 @@ public class BookstoreService {
     }
 
     public @NotNull List<Book> getAllBooks() {
-        return Collections.emptyList();
+        return dao.getAllBooks();
     }
 
     public @NotNull List<Book> getBooksWithPriceMoreThan(double price) {

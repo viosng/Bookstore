@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.sql.Date;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -43,20 +44,22 @@ public class BookstoreDao {
                 .usingGeneratedKeyColumns("ID");
     }
 
-    private static RowMapper<Author> authorRowMapper = (resultSet, i) -> {
-            if (resultSet.getString("NAME") != null) {
-                DateTime birthDate = new DateTime(resultSet.getDate("BIRTH_DATE"));
-                Date dbDeathDate = resultSet.getDate("DEATH_DATE");
+    private static RowMapper<Author> authorRowMapper(String idField, String nameField, String birthDateField, String deathDateField) {
+        return (resultSet, i) -> {
+            if (resultSet.getString(nameField) != null) {
+                DateTime birthDate = new DateTime(resultSet.getDate(birthDateField));
+                Date dbDeathDate = resultSet.getDate(deathDateField);
                 DateTime deathDate = dbDeathDate != null ? new DateTime(dbDeathDate) : null;
-                return new DefaultAuthor(resultSet.getInt("ID"), resultSet.getString("NAME"), birthDate, deathDate);
+                return new DefaultAuthor(resultSet.getInt(idField), resultSet.getString(nameField), birthDate, deathDate);
             } else {
                 return null;
             }
         };
+    }
 
     @NotNull
     public List<Author> getAllAuthors() {
-        return jdbcTemplate.query("SELECT * FROM AUTHORS", authorRowMapper);
+        return jdbcTemplate.query("SELECT * FROM AUTHORS", authorRowMapper("ID", "NAME", "BIRTH_DATE", "DEATH_DATE"));
     }
 
     @Nullable
@@ -74,7 +77,7 @@ public class BookstoreDao {
                     if (deathDate != null) {
                         ps.setDate(3, new Date(deathDate.getMillis()));
                     }
-                }, authorRowMapper);
+                }, authorRowMapper("ID", "NAME", "BIRTH_DATE", "DEATH_DATE"));
 
         return authors.isEmpty() ? null : authors.get(0);
     }
@@ -97,15 +100,53 @@ public class BookstoreDao {
         return new DefaultAuthor(id, name, birthDate, deathDate);
     }
 
+    @NotNull
+    public List<Book> getAllBooks() {
+        String query =
+                "SELECT AUTHORS.ID AID, AUTHORS.NAME ANAME, AUTHORS.BIRTH_DATE, AUTHORS.DEATH_DATE, " +
+                        " BOOKS.ID BID, BOOKS.NAME BNAME, BOOKS.PRICE, BOOKS.PUBLICATION_DATE FROM " +
+                        "    AUTHORS INNER JOIN AUTHORITY " +
+                        "        ON AUTHORS.ID = AUTHORITY.AUTHOR_ID " +
+                        "        INNER JOIN BOOKS " +
+                        "            ON BOOKS.ID = AUTHORITY.BOOK_ID ";
+        RowMapper<Author> authorRowMapper =
+                authorRowMapper("AID", "ANAME", "BIRTH_DATE", "DEATH_DATE");
+        List<Pair<Book, Author>> resultSets = jdbcTemplate.query(query, (rs, rowNum) -> {
+            Book book = new DefaultBook(
+                    rs.getInt("BID"),
+                    rs.getString("BNAME"),
+                    rs.getDouble("PRICE"),
+                    new DateTime(rs.getDate("PUBLICATION_DATE")),
+                    Collections.<Author>emptySet());
+            return new Pair<>(book, authorRowMapper.mapRow(rs, 0));
+        });
+
+
+        Map<Book, Set<Author>> bookSetMap = resultSets.stream().collect(Collectors.groupingBy(new Function<Pair<Book, Author>, Book>() {
+            @Override
+            public Book apply(Pair<Book, Author> t) {
+                return t.getKey();
+            }
+        }, Collectors.mapping(Pair::getValue, Collectors.toSet())));
+        return bookSetMap.entrySet().stream().map(e ->
+                new DefaultBook(
+                        e.getKey().getId(),
+                        e.getKey().getName(),
+                        e.getKey().getPrice(),
+                        e.getKey().getPublicationDate(),
+                        e.getValue())).collect(Collectors.toList());
+    }
+
     @Nullable
     public Book getBook(@NotNull String name, double price, @NotNull DateTime publicationDate) {
         String query =
-                "SELECT AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE, AUTHORS.DEATH_DATE, BOOKS.ID FROM " +
+                "SELECT AUTHORS.ID AID, AUTHORS.NAME NAME, AUTHORS.BIRTH_DATE BD, AUTHORS.DEATH_DATE DD, BOOKS.ID FROM " +
                         "    AUTHORS INNER JOIN AUTHORITY " +
                         "        ON AUTHORS.ID = AUTHORITY.AUTHOR_ID " +
-                        "        RIGHT JOIN BOOKS " +
+                        "        INNER JOIN BOOKS " +
                         "            ON BOOKS.ID = AUTHORITY.BOOK_ID " +
                         "WHERE BOOKS.NAME = ? AND PRICE = ? AND PUBLICATION_DATE = ?";
+        RowMapper<Author> authorRowMapper = authorRowMapper("AID", "NAME", "BD", "DD");
         List<Pair<Integer, Author>> dbAuthors =
                 jdbcTemplate.query(query, ps -> {
                     ps.setString(1, name);
@@ -116,8 +157,6 @@ public class BookstoreDao {
         Set<Author> authors;
         if (dbAuthors.isEmpty()) {
             return null;
-        } else if(dbAuthors.size() == 1 && dbAuthors.get(0).getValue() == null){
-            authors = Collections.emptySet();
         } else {
             authors = dbAuthors.stream().map(Pair::getValue).collect(Collectors.toSet());
         }

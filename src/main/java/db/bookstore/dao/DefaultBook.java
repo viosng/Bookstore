@@ -29,7 +29,7 @@ public class DefaultBook implements Book {
     @Nullable
     private Integer hashCode;
 
-    public DefaultBook(int id, @NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull Set<Author> authors) {
+    public DefaultBook(int id, @NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull Iterable<Author> authors) {
         this.id = id;
         this.name = name;
         this.price = price;
