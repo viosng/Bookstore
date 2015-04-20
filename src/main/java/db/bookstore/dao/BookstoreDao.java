@@ -106,26 +106,28 @@ public class BookstoreDao {
     }
 
     public @NotNull List<Book> getBooksOfAuthor(@NotNull Author author) {
-        return getBooks(" WHERE BOOKS.ID IN (SELECT BOOK_ID FROM AUTHORITY WHERE AUTHOR_ID = " + author.getId() + ")");
+        return getBooks(" WHERE BOOK_ID IN (SELECT BOOK_ID FROM AUTHORITY WHERE AUTHOR_ID = " + author.getId() + ")");
+    }
+
+    public @NotNull List<Book> getBooksWithPriceMoreThan(double price) {
+        return getBooks(" WHERE BOOK_PRICE > " + price);
+    }
+
+    public @NotNull List<Book> getBooksWithPriceLessThan(double price) {
+        return getBooks(" WHERE BOOK_PRICE < " + price);
     }
 
     private List<Book> getBooks(String whereClause) {
-        String query =
-                "SELECT AUTHORS.ID AID, AUTHORS.NAME ANAME, AUTHORS.BIRTH_DATE, AUTHORS.DEATH_DATE, " +
-                        " BOOKS.ID BID, BOOKS.NAME BNAME, BOOKS.PRICE, BOOKS.PUBLICATION_DATE FROM " +
-                        "    AUTHORS INNER JOIN AUTHORITY " +
-                        "        ON AUTHORS.ID = AUTHORITY.AUTHOR_ID " +
-                        "        INNER JOIN BOOKS " +
-                        "            ON BOOKS.ID = AUTHORITY.BOOK_ID ";
+        String query = "SELECT * FROM BOOKSTORE_VIEW";
         query += whereClause;
         RowMapper<Author> authorRowMapper =
-                authorRowMapper("AID", "ANAME", "BIRTH_DATE", "DEATH_DATE");
+                authorRowMapper("AUTHOR_ID", "AUTHOR_NAME", "AUTHOR_BIRTH_DATE", "AUTHOR_DEATH_DATE");
         List<Pair<Book, Author>> resultSets = jdbcTemplate.query(query, (rs, rowNum) -> {
             Book book = new DefaultBook(
-                    rs.getInt("BID"),
-                    rs.getString("BNAME"),
-                    rs.getDouble("PRICE"),
-                    new DateTime(rs.getDate("PUBLICATION_DATE")),
+                    rs.getInt("BOOK_ID"),
+                    rs.getString("BOOK_NAME"),
+                    rs.getDouble("BOOK_PRICE"),
+                    new DateTime(rs.getDate("BOOK_PUBLICATION_DATE")),
                     Collections.<Author>emptySet());
             return new Pair<>(book, authorRowMapper.mapRow(rs, 0));
         });
@@ -147,20 +149,14 @@ public class BookstoreDao {
 
     @Nullable
     public Book getBook(@NotNull String name, double price, @NotNull DateTime publicationDate) {
-        String query =
-                "SELECT AUTHORS.ID AID, AUTHORS.NAME NAME, AUTHORS.BIRTH_DATE BD, AUTHORS.DEATH_DATE DD, BOOKS.ID FROM " +
-                        "    AUTHORS INNER JOIN AUTHORITY " +
-                        "        ON AUTHORS.ID = AUTHORITY.AUTHOR_ID " +
-                        "        INNER JOIN BOOKS " +
-                        "            ON BOOKS.ID = AUTHORITY.BOOK_ID " +
-                        "WHERE BOOKS.NAME = ? AND PRICE = ? AND PUBLICATION_DATE = ?";
-        RowMapper<Author> authorRowMapper = authorRowMapper("AID", "NAME", "BD", "DD");
+        String query = "SELECT * FROM BOOKSTORE_VIEW WHERE BOOK_NAME = ? AND BOOK_PRICE = ? AND BOOK_PUBLICATION_DATE = ?";
+        RowMapper<Author> authorRowMapper = authorRowMapper("AUTHOR_ID", "AUTHOR_NAME", "AUTHOR_BIRTH_DATE", "AUTHOR_DEATH_DATE");
         List<Pair<Integer, Author>> dbAuthors =
                 jdbcTemplate.query(query, ps -> {
                     ps.setString(1, name);
                     ps.setDouble(2, price);
                     ps.setDate(3, new Date(publicationDate.getMillis()));
-                }, (rs, i) -> new Pair<>(rs.getInt(5), authorRowMapper.mapRow(rs, i)));
+                }, (rs, i) -> new Pair<>(rs.getInt("BOOK_ID"), authorRowMapper.mapRow(rs, i)));
 
         Set<Author> authors;
         if (dbAuthors.isEmpty()) {

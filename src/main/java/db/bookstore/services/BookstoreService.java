@@ -47,11 +47,11 @@ public class BookstoreService {
     }
 
     public @NotNull List<Book> getBooksWithPriceMoreThan(double price) {
-        return Collections.emptyList();
+        return dao.getBooksWithPriceMoreThan(price);
     }
 
     public @NotNull List<Book> getBooksWithPriceLessThan(double price) {
-        return Collections.emptyList();
+        return dao.getBooksWithPriceLessThan(price);
     }
 
     public @NotNull List<Book> getBooksOfAuthorsOlderThan(int age) {

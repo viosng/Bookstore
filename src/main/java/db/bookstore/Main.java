@@ -23,5 +23,7 @@ public class Main {
         service.addBook("Main book", 30.0, DateTime.parse("1999-01-01"));
         service.getAllBooks();
         service.getBooksOfAuthor(author);
+        service.getBooksWithPriceLessThan(31);
+        service.getBooksWithPriceMoreThan(30);
     }
 }
