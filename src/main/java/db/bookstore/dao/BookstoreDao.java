@@ -3,8 +3,6 @@ package db.bookstore.dao;
 import org.apache.commons.math3.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -168,7 +166,7 @@ public class BookstoreDao {
     }
 
     @NotNull
-    public Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull List<Author> authors) {
+    public Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull Iterable<Author> authors) {
         Book book = getBook(name, price, publicationDate);
         if (book == null) {
             Map<String, Object> parameters = new HashMap<>();

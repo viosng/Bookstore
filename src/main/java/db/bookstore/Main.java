@@ -22,10 +22,12 @@ public class Main {
             String newBorn = "NewBorn" + DateTime.now().getMinuteOfDay();
             System.out.println(service.addAuthor(newBorn, now, null));
             System.out.println(service.addAuthor(newBorn, now, null));
-            System.out.println(service.addAuthor(newBorn, now, null));
+
             System.out.println(service.getAllAuthors());
             System.out.println(service.getAllAuthors());
-            System.out.println(service.getAllAuthors());
+
+            System.out.println(service.getAllBooks());
+            System.out.println(service.getAllBooks());
         }
     }
 }

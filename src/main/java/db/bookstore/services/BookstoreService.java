@@ -4,10 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
-import db.bookstore.dao.Author;
-import db.bookstore.dao.Book;
-import db.bookstore.dao.BookstoreDao;
-import db.bookstore.dao.DefaultAuthor;
+import db.bookstore.dao.*;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Years;
@@ -35,6 +32,9 @@ public class BookstoreService {
     private LoadingCache<Author, Author> authorCache;
     private WeakReference<List<Author>> allAuthorsList;
 
+    private LoadingCache<Book, Book> bookCache;
+    private WeakReference<List<Book>> allBooksList;
+
     @PostConstruct
     private void init() {
         authorCache = CacheBuilder.newBuilder()
@@ -45,6 +45,17 @@ public class BookstoreService {
                     @Override
                     public Author load(@NotNull Author fictiveAuthor) throws Exception {
                         return dao.addAuthor(fictiveAuthor.getName(), fictiveAuthor.getBirthDate(), fictiveAuthor.getDeathDate());
+                    }
+                });
+        bookCache = CacheBuilder.newBuilder()
+                .maximumSize(100)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .softValues()
+                .build(new CacheLoader<Book, Book>() {
+                    @Override
+                    public Book load(@NotNull Book fictiveBook) throws Exception {
+                        return dao.addBook(fictiveBook.getName(), fictiveBook.getPrice(),
+                                fictiveBook.getPublicationDate(), fictiveBook.getAuthors());
                     }
                 });
     }
@@ -71,11 +82,6 @@ public class BookstoreService {
         return allAuthors;
     }
 
-    @Nullable
-    public Book getBook(@NotNull String name, double price, @NotNull DateTime publicationDate) {
-        return dao.getBook(name, price, publicationDate);
-    }
-
     public Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate,
                         @NotNull Author author, @NotNull Author... authors) {
         return addBook(name, price, publicationDate, Lists.asList(author, authors));
@@ -85,19 +91,22 @@ public class BookstoreService {
         if (authors.isEmpty()) {
             throw new IllegalArgumentException("Empty authors list");
         }
-        return addBookToDao(name, price, publicationDate, authors);
-    }
-
-    private Book addBookToDao(@NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull List<Author> authors) {
-        return dao.addBook(name, price, publicationDate, authors);
+        return bookCache.getUnchecked(new DefaultBook(0, name, price, publicationDate, authors));
     }
 
     public void addAuthority(@NotNull Author author, @NotNull Book book) {
         dao.addAuthority(author, book);
+        bookCache.refresh(book);
+        allBooksList = null;
     }
 
     public @NotNull List<Book> getAllBooks() {
-        return dao.getAllBooks();
+        List<Book> allBooks = allBooksList == null ? null : allBooksList.get();
+        if (allBooks == null) {
+            allBooks = dao.getAllBooks();
+            allBooksList = new WeakReference<>(allBooks);
+        }
+        return allBooks;
     }
 
     public @NotNull List<Book> getBooksOfAuthor(@NotNull Author author) {
