@@ -5,11 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 
 /**
  * Created by vio on 18.04.2015.
  */
-public class DefaultAuthor implements Author {
+public class DefaultAuthor implements Author, Serializable {
+
+    private static final long serialVersionUID = 468654801277970962L;
 
     private final int id;
 

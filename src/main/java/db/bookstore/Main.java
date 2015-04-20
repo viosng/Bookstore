@@ -1,10 +1,12 @@
 package db.bookstore;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import db.bookstore.configs.MainJavaConfig;
-import db.bookstore.dao.Author;
-import db.bookstore.dao.Book;
 import db.bookstore.services.BookstoreService;
 import org.joda.time.DateTime;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -12,21 +14,21 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class Main {
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MainJavaConfig.class);
-        BookstoreService service = context.getBean(BookstoreService.class);
-        service.getAllAuthors();
-        Author author1 = service.addAuthor("V. Petrov", DateTime.parse("1988-01-01"));
-        Author author = service.addAuthor("E. Ivanov", DateTime.parse("1968-01-01"), DateTime.parse("1998-01-01"));
-        Book book = service.addBook("Main book", 30.0, DateTime.parse("1999-01-01"));
-        service.addAuthority(author, book);
-        service.addAuthority(author1, book);
-        service.addBook("Main book", 30.0, DateTime.parse("1999-01-01"));
-        service.getAllBooks();
-        service.getBooksOfAuthor(author);
-        service.getBooksWithPriceLessThan(31);
-        service.getBooksWithPriceMoreThan(30);
-        service.getBooksOfAuthorsYoungerThan(30);
-        service.getBooksOfAuthorsOlderThan(30);
-        service.getBooksOfAliveAuthors();
+        Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.INFO);
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MainJavaConfig.class)) {
+            BookstoreService service = context.getBean(BookstoreService.class);
+            System.out.println("Start using bookstore");
+            DateTime now = DateTime.parse("1998-01-01");
+            String newBorn = "NewBorn" + DateTime.now().getMinuteOfDay();
+            System.out.println(service.getAuthor(newBorn, now, null));
+            System.out.println(service.getAuthor(newBorn, now, null));
+
+            System.out.println(service.addAuthor(newBorn, now, null));
+            System.out.println(service.addAuthor(newBorn, now, null));
+
+            System.out.println(service.getAuthor(newBorn, now, null));
+            System.out.println(service.getAllAuthors());
+        }
     }
 }

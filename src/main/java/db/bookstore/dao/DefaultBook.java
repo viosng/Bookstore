@@ -6,12 +6,15 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * Created by vio on 18.04.2015.
  */
-public class DefaultBook implements Book {
+public class DefaultBook implements Book, Serializable {
+
+    private static final long serialVersionUID = 4682314345277970962L;
 
     private final int id;
 

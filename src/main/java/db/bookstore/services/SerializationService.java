@@ -21,6 +21,4 @@ public class SerializationService {
     @Autowired
     private List<Serializer<Book>> bookSerializers;
 
-    @Autowired
-    private List<Serializer<Author>> authorSerializers;
 }

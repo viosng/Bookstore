@@ -61,11 +61,13 @@ public class BookstoreDao {
 
     @NotNull
     public List<Author> getAllAuthors() {
+        System.out.println(" ---------------------- ALL AUTHORS --------------------------");
         return jdbcTemplate.query("SELECT * FROM AUTHORS", authorRowMapper("ID", "NAME", "BIRTH_DATE", "DEATH_DATE"));
     }
 
     @Nullable
     public Author getAuthor(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
+        System.out.println(" ---------------------- GET AUTHOR --------------------------");
         String query;
         if (deathDate != null) {
             query = "SELECT * FROM AUTHORS WHERE NAME = ? AND BIRTH_DATE = ? AND DEATH_DATE = ?";
@@ -87,18 +89,14 @@ public class BookstoreDao {
 
     @NotNull
     public Author addAuthor(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
-        Author author = getAuthor(name, birthDate, deathDate);
-        if (author != null) {
-            return author;
-        }
-
+        System.out.println(" ---------------------- ADD AUTHOR --------------------------");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("NAME", name);
         parameters.put("BIRTH_DATE", new Date(birthDate.getMillis()));
         if (deathDate != null) {
             parameters.put("DEATH_DATE", new Date(deathDate.getMillis()));
         }
-        int id = authorInsert.execute(parameters);
+        int id = authorInsert.executeAndReturnKey(parameters).intValue();
         return new DefaultAuthor(id, name, birthDate, deathDate);
     }
 
@@ -117,31 +115,6 @@ public class BookstoreDao {
 
     public @NotNull List<Book> getBooksWithPriceLessThan(double price) {
         return getBooks(" WHERE BOOK_PRICE < " + price);
-    }
-
-    private int getAge(DateTime birthDate, DateTime deathDate) {
-        return Years.yearsBetween(birthDate, deathDate == null ? DateTime.now() : deathDate).getYears();
-    }
-
-    private @NotNull List<Book> getFilteredAuthorsByAge(Comparator<Integer> ageComparator, int age) {
-        return getAllBooks().stream().filter(book ->
-                book.getAuthors().stream().allMatch(author ->
-                         ageComparator.compare(getAge(author.getBirthDate(), author.getDeathDate()), age) > 0))
-                .collect(Collectors.toList());
-    }
-
-    public @NotNull List<Book> getBooksOfAuthorsOlderThan(int age) {
-        return getFilteredAuthorsByAge(Comparator.<Integer>naturalOrder(), age);
-    }
-
-    public @NotNull List<Book> getBooksOfAuthorsYoungerThan(int age) {
-        return getFilteredAuthorsByAge(Comparator.<Integer>reverseOrder(), age);
-    }
-
-    public @NotNull List<Book> getBooksOfAliveAuthors() {
-        return getAllBooks().stream().filter(book ->
-                book.getAuthors().stream().anyMatch(author ->
-                        author.getDeathDate() == null)).collect(Collectors.toList());
     }
 
     private List<Book> getBooks(String whereClause) {
@@ -195,18 +168,20 @@ public class BookstoreDao {
     }
 
     @NotNull
-    public Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate) {
+    public Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull List<Author> authors) {
         Book book = getBook(name, price, publicationDate);
-        if (book != null) {
-            return book;
+        if (book == null) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("NAME", name);
+            parameters.put("PUBLICATION_DATE", publicationDate.toDate());
+            parameters.put("PRICE", price);
+            int id = bookInsert.executeAndReturnKey(parameters).intValue();
+            book = new DefaultBook(id, name, price, publicationDate, Collections.<Author>emptySet());
         }
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("NAME", name);
-        parameters.put("PUBLICATION_DATE", publicationDate.toDate());
-        parameters.put("PRICE", price);
-        int id = bookInsert.execute(parameters);
-        return new DefaultBook(id, name, price, publicationDate, Collections.<Author>emptySet());
+        for (Author author : authors) {
+            addAuthority(author, book);
+        }
+        return book;
     }
 
     public void addAuthority(@NotNull Author author, @NotNull Book book) {
