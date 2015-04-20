@@ -1,28 +1,27 @@
 package db.bookstore.services;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import db.bookstore.dao.Author;
 import db.bookstore.dao.Book;
 import db.bookstore.dao.BookstoreDao;
+import db.bookstore.dao.DefaultAuthor;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
+import javax.annotation.PostConstruct;
+import java.lang.ref.WeakReference;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by vio on 18.04.2015.
@@ -30,37 +29,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Service
 public class BookstoreService {
 
-    @Component
-    public static class CacheHelper {
-
-        @Autowired
-        private BookstoreDao dao;
-
-        @Nullable
-        @Cacheable(value = "authorsCache")
-        private Author getAuthorWithNormalizedDates(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
-            return dao.getAuthor(name, birthDate, deathDate);
-        }
-
-        @Cacheable(value = "authorsCache")
-        @CacheEvict(value = "authorsCache", key = "'all'.hashCode()")
-        private Author addAuthorToDao(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
-            return dao.addAuthor(name, birthDate, deathDate);
-        }
-    }
-
     @Autowired
     private BookstoreDao dao;
 
-    @Autowired
-    private CacheHelper cacheHelper;
+    private LoadingCache<Author, Author> authorCache;
+    private WeakReference<List<Author>> allAuthorsList;
 
-    @Nullable
-    @Cacheable(value = "authorsCache")
-    public Author getAuthor(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
-        return cacheHelper.getAuthorWithNormalizedDates(name,
-                birthDate.withTime(0, 0, 0, 0),
-                deathDate == null ? null : deathDate.withTime(0, 0, 0, 0));
+    @PostConstruct
+    private void init() {
+        authorCache = CacheBuilder.newBuilder()
+                .maximumSize(100)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .softValues()
+                .build(new CacheLoader<Author, Author>() {
+                    @Override
+                    public Author load(@NotNull Author fictiveAuthor) throws Exception {
+                        return dao.addAuthor(fictiveAuthor.getName(), fictiveAuthor.getBirthDate(), fictiveAuthor.getDeathDate());
+                    }
+                });
     }
 
     @NotNull
@@ -72,17 +58,17 @@ public class BookstoreService {
     public Author addAuthor(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
         birthDate = birthDate.withTime(0, 0, 0, 0);
         deathDate = deathDate == null ? null : deathDate.withTime(0, 0, 0, 0);
-        Author author = cacheHelper.getAuthorWithNormalizedDates(name, birthDate, deathDate);
-        if (author != null) {
-            return author;
-        }
-        return cacheHelper.addAuthorToDao(name, birthDate, deathDate);
+        return authorCache.getUnchecked(new DefaultAuthor(0, name, birthDate, deathDate));
     }
 
-
-    @Cacheable(value = "authorsCache", key = "'all'.hashCode()")
-    public @NotNull List<Author> getAllAuthors() {
-        return dao.getAllAuthors();
+    @NotNull
+    public List<Author> getAllAuthors() {
+        List<Author> allAuthors = allAuthorsList == null ? null : allAuthorsList.get();
+        if (allAuthors == null) {
+            allAuthors = dao.getAllAuthors();
+            allAuthorsList = new WeakReference<>(allAuthors);
+        }
+        return allAuthors;
     }
 
     @Nullable
@@ -95,10 +81,6 @@ public class BookstoreService {
         return addBook(name, price, publicationDate, Lists.asList(author, authors));
     }
 
-    @Caching(cacheable = {
-            @Cacheable(value = "booksCache", key = "T(java.util.Objects).hash('book', #name, #price, #publicationDate, #authors)"),
-            @Cacheable(value = "booksCache", key = "T(java.util.Objects).hash('book', #name, #price, #publicationDate)")
-    })
     public Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull List<Author> authors) {
         if (authors.isEmpty()) {
             throw new IllegalArgumentException("Empty authors list");
@@ -106,48 +88,26 @@ public class BookstoreService {
         return addBookToDao(name, price, publicationDate, authors);
     }
 
-
-    @Caching(
-            evict = {
-                    @CacheEvict(value = "booksCache", key = "'all'"),
-                    @CacheEvict(value = "booksPriceCache", allEntries = true),
-                    @CacheEvict(value = "booksCache", key = "T(java.util.Objects).hash('book', #name, #price, #publicationDate, #authors)")
-            })
     private Book addBookToDao(@NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull List<Author> authors) {
         return dao.addBook(name, price, publicationDate, authors);
     }
 
-    @Caching(
-            evict = {
-                    @CacheEvict(value = "booksCache", key = "'all'"),
-                    @CacheEvict(value = "booksPriceCache", allEntries = true),
-                    @CacheEvict(value = "booksCache",
-                            key = "T(java.util.Objects).hash('book', #book.getName(), #book.getPrice(), " +
-                                    "#book.getPublicationDate())"),
-                    @CacheEvict(value = "booksCache",
-                            key = "T(java.util.Objects).hash('book', #book.getName(), #book.getPrice(), " +
-                                    "#book.getPublicationDate(), #book.getAuthors())"),
-            })
     public void addAuthority(@NotNull Author author, @NotNull Book book) {
         dao.addAuthority(author, book);
     }
 
-    @Cacheable(value = "booksCache", key = "'all'")
     public @NotNull List<Book> getAllBooks() {
         return dao.getAllBooks();
     }
 
-    @Cacheable(value="booksCache", key="'booksOfAuthor' + #author.toString()")
     public @NotNull List<Book> getBooksOfAuthor(@NotNull Author author) {
         return dao.getBooksOfAuthor(author);
     }
 
-    @Cacheable(value="booksPriceCache", key="'booksPriceMoreThan' + #price.toString()")
     public @NotNull List<Book> getBooksWithPriceMoreThan(double price) {
         return dao.getBooksWithPriceMoreThan(price);
     }
 
-    @Cacheable(value="booksPriceCache", key="'booksPriceLessThan' + #price.toString()")
     public @NotNull List<Book> getBooksWithPriceLessThan(double price) {
         return dao.getBooksWithPriceLessThan(price);
     }

@@ -6,7 +6,6 @@ import db.bookstore.configs.MainJavaConfig;
 import db.bookstore.services.BookstoreService;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -21,13 +20,11 @@ public class Main {
             System.out.println("Start using bookstore");
             DateTime now = DateTime.parse("1998-01-01");
             String newBorn = "NewBorn" + DateTime.now().getMinuteOfDay();
-            System.out.println(service.getAuthor(newBorn, now, null));
-            System.out.println(service.getAuthor(newBorn, now, null));
-
             System.out.println(service.addAuthor(newBorn, now, null));
             System.out.println(service.addAuthor(newBorn, now, null));
-
-            System.out.println(service.getAuthor(newBorn, now, null));
+            System.out.println(service.addAuthor(newBorn, now, null));
+            System.out.println(service.getAllAuthors());
+            System.out.println(service.getAllAuthors());
             System.out.println(service.getAllAuthors());
         }
     }
