@@ -3,6 +3,8 @@ package db.bookstore.dao;
 import org.apache.commons.math3.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -115,6 +117,31 @@ public class BookstoreDao {
 
     public @NotNull List<Book> getBooksWithPriceLessThan(double price) {
         return getBooks(" WHERE BOOK_PRICE < " + price);
+    }
+
+    private int getAge(DateTime birthDate, DateTime deathDate) {
+        return Years.yearsBetween(birthDate, deathDate == null ? DateTime.now() : deathDate).getYears();
+    }
+
+    private @NotNull List<Book> getFilteredAuthorsByAge(Comparator<Integer> ageComparator, int age) {
+        return getAllBooks().stream().filter(book ->
+                book.getAuthors().stream().allMatch(author ->
+                         ageComparator.compare(getAge(author.getBirthDate(), author.getDeathDate()), age) > 0))
+                .collect(Collectors.toList());
+    }
+
+    public @NotNull List<Book> getBooksOfAuthorsOlderThan(int age) {
+        return getFilteredAuthorsByAge(Comparator.<Integer>naturalOrder(), age);
+    }
+
+    public @NotNull List<Book> getBooksOfAuthorsYoungerThan(int age) {
+        return getFilteredAuthorsByAge(Comparator.<Integer>reverseOrder(), age);
+    }
+
+    public @NotNull List<Book> getBooksOfAliveAuthors() {
+        return getAllBooks().stream().filter(book ->
+                book.getAuthors().stream().anyMatch(author ->
+                        author.getDeathDate() == null)).collect(Collectors.toList());
     }
 
     private List<Book> getBooks(String whereClause) {

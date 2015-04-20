@@ -26,6 +26,9 @@ public class DefaultAuthor implements Author {
     private Integer hashCode;
 
     public DefaultAuthor(int id, @NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
+        if (deathDate != null && birthDate.isAfter(deathDate)) {
+            throw new IllegalArgumentException("DeathDate should be after birthDate");
+        }
         this.id = id;
         this.name = name;
         this.birthDate = birthDate;

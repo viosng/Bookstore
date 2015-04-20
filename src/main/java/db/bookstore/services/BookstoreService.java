@@ -55,15 +55,15 @@ public class BookstoreService {
     }
 
     public @NotNull List<Book> getBooksOfAuthorsOlderThan(int age) {
-        return Collections.emptyList();
+        return dao.getBooksOfAuthorsOlderThan(age);
     }
 
     public @NotNull List<Book> getBooksOfAuthorsYoungerThan(int age) {
-        return Collections.emptyList();
+        return dao.getBooksOfAuthorsYoungerThan(age);
     }
 
     public @NotNull List<Book> getBooksOfAliveAuthors() {
-        return Collections.emptyList();
+        return dao.getBooksOfAliveAuthors();
     }
 
     public @NotNull List<Book> getFilteredBooks(@NotNull Predicate<Book> bookFilter) {

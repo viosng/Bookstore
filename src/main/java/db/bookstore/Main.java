@@ -25,5 +25,8 @@ public class Main {
         service.getBooksOfAuthor(author);
         service.getBooksWithPriceLessThan(31);
         service.getBooksWithPriceMoreThan(30);
+        service.getBooksOfAuthorsYoungerThan(30);
+        service.getBooksOfAuthorsOlderThan(30);
+        service.getBooksOfAliveAuthors();
     }
 }
