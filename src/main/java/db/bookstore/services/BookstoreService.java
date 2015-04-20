@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Years;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
@@ -35,11 +36,23 @@ public class BookstoreService {
     private LoadingCache<Book, Book> bookCache;
     private WeakReference<List<Book>> allBooksList;
 
+    @Value("${authorCacheMaximumSize:100}")
+    private int authorCacheMaximumSize;
+
+    @Value("${authorExpireAfterMinutes:10}")
+    private int authorExpireAfterMinutes;
+
+    @Value("${authorCacheMaximumSize:100}")
+    private int bookCacheMaximumSize;
+
+    @Value("${bookExpireAfterMinutes:10}")
+    private int bookExpireAfterMinutes;
+
     @PostConstruct
     private void init() {
         authorCache = CacheBuilder.newBuilder()
-                .maximumSize(100)
-                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .maximumSize(authorCacheMaximumSize)
+                .expireAfterWrite(authorExpireAfterMinutes, TimeUnit.MINUTES)
                 .softValues()
                 .build(new CacheLoader<Author, Author>() {
                     @Override
@@ -48,8 +61,8 @@ public class BookstoreService {
                     }
                 });
         bookCache = CacheBuilder.newBuilder()
-                .maximumSize(100)
-                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .maximumSize(bookCacheMaximumSize)
+                .expireAfterWrite(bookExpireAfterMinutes, TimeUnit.MINUTES)
                 .softValues()
                 .build(new CacheLoader<Book, Book>() {
                     @Override
