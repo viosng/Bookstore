@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import db.bookstore.configs.MainJavaConfig;
 import db.bookstore.dao.Book;
-import db.bookstore.serializers.impl.BookJSONSerializer;
+import db.bookstore.serializers.impl.BookJsonSerializer;
 import db.bookstore.services.BookstoreService;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class Main {
             List<Book> allBooks = service.getAllBooks();
             System.out.println(allBooks);
 
-            BookJSONSerializer serializer = context.getBean(BookJSONSerializer.class);
+            BookJsonSerializer serializer = context.getBean(BookJsonSerializer.class);
             serializer.serialize(allBooks, "books.json");
             List<Book> deserializedBooks = serializer.deserialize("books.json");
             System.out.println(deserializedBooks);

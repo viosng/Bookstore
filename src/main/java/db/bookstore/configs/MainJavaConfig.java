@@ -6,11 +6,15 @@ package db.bookstore.configs;
 
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @PropertySource("classpath:db.properties")
 @ComponentScan(basePackages = {"db.bookstore"})
 @Configuration
 @EnableAspectJAutoProxy
+@EnableAsync
+@EnableScheduling
 @ImportResource("classpath:library-conf.xml")
 public class MainJavaConfig  {
     @Bean
