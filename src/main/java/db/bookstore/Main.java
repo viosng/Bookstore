@@ -3,10 +3,14 @@ package db.bookstore;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import db.bookstore.configs.MainJavaConfig;
+import db.bookstore.dao.Book;
+import db.bookstore.serializers.impl.BookJSONSerializer;
 import db.bookstore.services.BookstoreService;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.List;
 
 /**
  * Created by vio on 18.04.2015.
@@ -27,7 +31,14 @@ public class Main {
             System.out.println(service.getAllAuthors());
 
             System.out.println(service.getAllBooks());
-            System.out.println(service.getAllBooks());
+            List<Book> allBooks = service.getAllBooks();
+            System.out.println(allBooks);
+
+            BookJSONSerializer serializer = context.getBean(BookJSONSerializer.class);
+            serializer.serialize(allBooks, "books.json");
+            List<Book> deserializedBooks = serializer.deserialize("books.json");
+            System.out.println(deserializedBooks);
+            System.out.println(deserializedBooks.equals(allBooks));
         }
     }
 }

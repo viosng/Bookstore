@@ -1,6 +1,5 @@
 package db.bookstore.services;
 
-import db.bookstore.dao.Author;
 import db.bookstore.dao.Book;
 import db.bookstore.dao.BookstoreDao;
 import db.bookstore.serializers.Serializer;
@@ -20,5 +19,6 @@ public class SerializationService {
 
     @Autowired
     private List<Serializer<Book>> bookSerializers;
+
 
 }

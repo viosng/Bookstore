@@ -17,7 +17,4 @@
               <property name="dataSource" ref="myds"/>
        </bean>
 
-       <bean class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-              <constructor-arg type="javax.sql.DataSource" ref="myds"/>
-       </bean>
 </beans>

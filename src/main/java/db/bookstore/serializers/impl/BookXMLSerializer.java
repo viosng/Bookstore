@@ -5,6 +5,7 @@ import db.bookstore.serializers.Serializer;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
 @Component
 public class BookXMLSerializer implements Serializer<Book> {
     @Override
-    public void serialize(@NotNull Iterable<Book> elements, @NotNull String fileName) {
+    public void serialize(@NotNull Collection<Book> elements, @NotNull String fileName) {
 
     }
 
