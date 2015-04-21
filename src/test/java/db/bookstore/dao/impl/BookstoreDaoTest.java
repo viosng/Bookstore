@@ -12,6 +12,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,16 +32,19 @@ public class BookstoreDaoTest {
     private BookstoreDao dao;
 
     @Test
+    @Transactional
     public void testGetAuthor() throws Exception {
         assertEquals(new DefaultAuthor(101, "author1", new DateTime("2000-04-05"), null), dao.getAuthor(101));
     }
 
     @Test(expected = DuplicateKeyException.class)
+    @Transactional
     public void testAddAuthor() throws Exception {
         dao.addAuthor("author1", new DateTime("2000-04-05"), null);
     }
 
     @Test
+    @Transactional
     public void testAddGetAndDeleteAuthor() throws Exception {
         Author author = dao.addAuthor("new_author", new DateTime("2000-04-05"), new DateTime("2010-04-05"));
         assertEquals(6, dao.getAllAuthors().size());
@@ -51,6 +55,7 @@ public class BookstoreDaoTest {
     }
 
     @Test
+    @Transactional
     public void testAddGetAndDeleteBook() throws Exception {
         Author author1 = dao.getAuthor(1101);
         assertNotNull(author1);
@@ -74,6 +79,7 @@ public class BookstoreDaoTest {
     }
 
     @Test
+    @Transactional
     public void testGetBooksOfAuthor() throws Exception {
         Author author = dao.getAuthor(101);
         assertNotNull(author);
@@ -81,21 +87,25 @@ public class BookstoreDaoTest {
     }
 
     @Test
+    @Transactional
     public void testGetBooksWithPriceMoreThan() throws Exception {
         assertEquals(3, dao.getBooksWithPriceMoreThan(33.0).size());
     }
 
     @Test
+    @Transactional
     public void testGetBooksWithPriceLessThan() throws Exception {
         assertEquals(2, dao.getBooksWithPriceLessThan(36.0).size());
     }
 
     @Test(expected = DuplicateKeyException.class)
+    @Transactional
     public void testAddBook() throws Exception {
         dao.addBook("test1", 30.0, new DateTime("2015-04-14"), Collections.emptyList());
     }
 
     @Test
+    @Transactional
     public void testAddAndDeleteAuthority() throws Exception {
         Book book = dao.getBook(701);
         assertNotNull(book);
