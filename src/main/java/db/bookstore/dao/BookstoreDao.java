@@ -42,4 +42,6 @@ public interface BookstoreDao {
     Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull Iterable<Author> authors);
 
     void addAuthority(@NotNull Author author, @NotNull Book book);
+
+    void deleteAuthority(@NotNull Author author, @NotNull Book book);
 }

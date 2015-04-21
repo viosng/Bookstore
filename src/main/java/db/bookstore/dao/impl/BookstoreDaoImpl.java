@@ -93,7 +93,7 @@ public class BookstoreDaoImpl implements BookstoreDao {
 
     @Override
     public void deleteAuthor(int id) {
-
+        jdbcTemplate.execute("DELETE FROM AUTHORS WHERE ID = " + id);
     }
 
     @Override
@@ -111,7 +111,8 @@ public class BookstoreDaoImpl implements BookstoreDao {
 
     @Override
     public void deleteBook(int id) {
-        jdbcTemplate.execute("DELETE FROM AUTHORS WHERE ID = " + id);
+        jdbcTemplate.execute("DELETE FROM AUTHORITY WHERE BOOK_ID = " + id);
+        jdbcTemplate.execute("DELETE FROM BOOKS WHERE ID = " + id);
     }
 
     @Override
@@ -167,7 +168,7 @@ public class BookstoreDaoImpl implements BookstoreDao {
         parameters.put("PUBLICATION_DATE", publicationDate.toDate());
         parameters.put("PRICE", price);
         int id = bookInsert.executeAndReturnKey(parameters).intValue();
-        Book book = new DefaultBook(id, name, price, publicationDate, Collections.<Author>emptySet());
+        Book book = new DefaultBook(id, name, price, publicationDate.withTime(0, 0, 0, 0), authors);
         for (Author author : authors) {
             addAuthority(author, book);
         }
@@ -176,17 +177,14 @@ public class BookstoreDaoImpl implements BookstoreDao {
 
     @Override
     public void addAuthority(@NotNull Author author, @NotNull Book book) {
-        boolean hasAuthority = jdbcTemplate.query("SELECT * FROM AUTHORITY WHERE AUTHOR_ID = ? AND BOOK_ID = ?", ps -> {
-            ps.setInt(1, author.getId());
-            ps.setInt(2, book.getId());
-        }, (rs, i) -> rs).size() > 0;
-        if (hasAuthority)  {
-            return;
-        }
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("BOOK_ID", book.getId());
         parameters.put("AUTHOR_ID", author.getId());
         authorityInsert.execute(parameters);
     }
 
+    @Override
+    public void deleteAuthority(@NotNull Author author, @NotNull Book book) {
+        jdbcTemplate.execute("DELETE FROM AUTHORITY WHERE BOOK_ID = " + book.getId() + " AND AUTHOR_ID = " + author.getId());
+    }
 }
