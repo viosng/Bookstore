@@ -11,11 +11,14 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.type.TypeReference;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
  */
 @Component
 public class BookJsonSerializer implements Serializer<Book> {
+
+    private final static Logger log = LoggerFactory.getLogger(BookJsonSerializer.class);
+
 
     private static class JsonAuthor {
         @JsonProperty
@@ -106,7 +112,9 @@ public class BookJsonSerializer implements Serializer<Book> {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
         try {
-            mapper.writerWithType(new TypeReference<Collection<JsonBook>>() {})
+            log.info("All books serialization to file {} is started", fileName);
+            mapper.writerWithType(new TypeReference<Collection<JsonBook>>() {
+            })
                     .writeValue(
                             new File(fileName),
                             elements.stream().map(b ->
@@ -123,8 +131,9 @@ public class BookJsonSerializer implements Serializer<Book> {
                                                             a.getDeathDate() != null ? a.getDeathDate().toString() : null
                                                     )).collect(Collectors.toList())
                                     )).collect(Collectors.toList()));
+            log.info("All books serialization to file {} is finished", fileName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Serialization error is occurred.", e);
         }
     }
 
@@ -133,9 +142,10 @@ public class BookJsonSerializer implements Serializer<Book> {
     public List<Book> deserialize(@NotNull String fileName) {
         ObjectMapper mapper = new ObjectMapper();
         try {
+            log.info("All books deserialization from file {} is started", fileName);
             List<JsonBook> jsonBooks = mapper.readValue(new File(fileName), new TypeReference<List<JsonBook>>() {
             });
-            return jsonBooks.stream().map(b -> new DefaultBook(
+            List<Book> books = jsonBooks.stream().map(b -> new DefaultBook(
                     b.id,
                     b.name,
                     b.price,
@@ -147,8 +157,11 @@ public class BookJsonSerializer implements Serializer<Book> {
                             a.deathDate != null ? new DateTime(a.deathDate) : null
                     )).collect(Collectors.toList())
             )).collect(Collectors.toList());
+            log.info("All books deserialization from file {} is finished", fileName);
+            return books;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Serialization error is occurred. Returnng empty list", e);
+            return Collections.emptyList();
         }
     }
 }

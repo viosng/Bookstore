@@ -16,7 +16,7 @@ import java.util.List;
  * Created by vio on 18.04.2015.
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.setLevel(Level.INFO);
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MainJavaConfig.class)) {
@@ -39,6 +39,7 @@ public class Main {
             List<Book> deserializedBooks = serializer.deserialize("books.json");
             System.out.println(deserializedBooks);
             System.out.println(deserializedBooks.equals(allBooks));
+            Thread.sleep(1000000);
         }
     }
 }
