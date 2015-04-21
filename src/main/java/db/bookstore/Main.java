@@ -3,8 +3,8 @@ package db.bookstore;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import db.bookstore.configs.MainJavaConfig;
+import db.bookstore.dao.Author;
 import db.bookstore.dao.Book;
-import db.bookstore.serializers.impl.BookJsonSerializer;
 import db.bookstore.services.BookstoreService;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
@@ -18,28 +18,31 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.INFO);
+        root.setLevel(Level.DEBUG);
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MainJavaConfig.class)) {
             BookstoreService service = context.getBean(BookstoreService.class);
             System.out.println("Start using bookstore");
-            DateTime now = DateTime.parse("1998-01-01");
-            String newBorn = "NewBorn" + DateTime.now().getMinuteOfDay();
-            System.out.println(service.addAuthor(newBorn, now, null));
-            System.out.println(service.addAuthor(newBorn, now, null));
 
             System.out.println(service.getAllAuthors());
-            System.out.println(service.getAllAuthors());
+            System.out.println(service.getBooksOfAliveAuthors());
+
+            List<Author> allAuthors = service.getAllAuthors();
+            System.out.println(allAuthors);
 
             System.out.println(service.getAllBooks());
             List<Book> allBooks = service.getAllBooks();
             System.out.println(allBooks);
+            System.out.println("bbbb");
+            Author author = service.addAuthor("Burn" + System.currentTimeMillis(), DateTime.now());
+            System.out.println(service.getAuthor(author.getId()));
+            System.out.println(service.getAuthor(author.getId()));
+            System.out.println(2);
+            System.out.println(service.getAllAuthors());
+            System.out.println(service.getAllAuthors());
+            System.out.println(3);
+            System.out.println(service.getAllBooks());
+            System.out.println(service.getAllBooks());
 
-            BookJsonSerializer serializer = context.getBean(BookJsonSerializer.class);
-            serializer.serialize(allBooks, "books.json");
-            List<Book> deserializedBooks = serializer.deserialize("books.json");
-            System.out.println(deserializedBooks);
-            System.out.println(deserializedBooks.equals(allBooks));
-            Thread.sleep(1000000);
         }
     }
 }

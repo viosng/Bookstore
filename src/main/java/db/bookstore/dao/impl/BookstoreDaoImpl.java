@@ -63,7 +63,19 @@ public class BookstoreDaoImpl implements BookstoreDao {
     @Override
     @NotNull
     public List<Author> getAllAuthors() {
-        return jdbcTemplate.query("SELECT * FROM AUTHORS", authorRowMapper("ID", "NAME", "BIRTH_DATE", "DEATH_DATE"));
+        return getAuthors("");
+    }
+
+    @Nullable
+    @Override
+    public Author getAuthor(int id) {
+        List<Author> authors = getAuthors(" WHERE ID = " + id);
+        return authors.isEmpty() ? null : authors.get(0);
+    }
+
+    @NotNull
+    private List<Author> getAuthors(@NotNull String wherePart) {
+        return jdbcTemplate.query("SELECT * FROM AUTHORS " + wherePart, authorRowMapper("ID", "NAME", "BIRTH_DATE", "DEATH_DATE"));
     }
 
     @Override
@@ -83,6 +95,13 @@ public class BookstoreDaoImpl implements BookstoreDao {
     @NotNull
     public List<Book> getAllBooks() {
         return getBooks("");
+    }
+
+    @Nullable
+    @Override
+    public Book getBook(int id) {
+        List<Book> books = getBooks(" WHERE BOOK_ID = " + id);
+        return books.isEmpty() ? null : books.get(0);
     }
 
     @Override
