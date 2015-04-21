@@ -2,6 +2,7 @@ package db.bookstore.dao.impl;
 
 import db.bookstore.dao.Author;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -11,9 +12,16 @@ import static org.junit.Assert.assertEquals;
  */
 public class DefaultAuthorTest {
 
-    private DateTime birthDate = new DateTime("2000-01-01");
-    private DateTime deathDate = new DateTime("2010-01-01");
-    private Author author = new DefaultAuthor(1, "name", birthDate, deathDate);
+    private DateTime birthDate;
+    private DateTime deathDate;
+    private Author author;
+
+    @Before
+    public void setUp() throws Exception {
+        birthDate = new DateTime("2000-01-01");
+        deathDate = new DateTime("2010-01-01");
+        author = new DefaultAuthor(1, "name", birthDate, deathDate);
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testException() throws Exception {

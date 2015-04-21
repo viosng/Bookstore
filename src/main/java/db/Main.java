@@ -1,8 +1,8 @@
-package db.bookstore;
+package db;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import db.bookstore.configs.MainJavaConfig;
+import db.configs.MainJavaConfig;
 import db.bookstore.dao.Author;
 import db.bookstore.dao.Book;
 import db.bookstore.services.BookstoreService;

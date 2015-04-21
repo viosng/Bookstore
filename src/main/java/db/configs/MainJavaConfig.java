@@ -1,4 +1,4 @@
-package db.bookstore.configs;
+package db.configs;
 
 /**
  * Created by vio on 18.04.2015.
