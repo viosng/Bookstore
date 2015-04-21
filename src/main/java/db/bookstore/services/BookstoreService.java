@@ -28,9 +28,13 @@ public interface BookstoreService {
     @Nullable
     Author getAuthor(int id);
 
+    void updateAuthor(int id, @NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate);
+
     void deleteAuthor(int id);
 
-    //void updateAuthor(int id);
+    void addAuthority(@NotNull Author author, @NotNull Book book);
+
+    void deleteAuthority(@NotNull Author author, @NotNull Book book);
 
     @NotNull
     Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate,
@@ -39,15 +43,13 @@ public interface BookstoreService {
     @NotNull
     Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate, @NotNull List<Author> authors);
 
-    void addAuthority(@NotNull Author author, @NotNull Book book);
-
-    void deleteAuthority(@NotNull Author author, @NotNull Book book);
-
     @NotNull
     List<Book> getAllBooks();
 
     @Nullable
     Book getBook(int id);
+
+    void updateBook(int id, @NotNull String name, double price, @NotNull DateTime publicationDate);
 
     void deleteBook(int id);
 

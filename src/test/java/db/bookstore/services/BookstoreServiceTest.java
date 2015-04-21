@@ -52,6 +52,16 @@ public class BookstoreServiceTest {
     }
 
     @Test
+    public void testUpdateBookCache() throws Exception {
+        System.out.println(service.getBook(1));
+        System.out.println(service.getBook(1));
+        service.updateBook(1, "", 1.0, DateTime.now());
+        System.out.println(service.getBook(1));
+        System.out.println(service.getBook(1));
+        verify(dao, times(2)).getBook(anyInt());
+    }
+
+    @Test
     public void testDeleteBookCache() throws Exception {
         System.out.println(service.getBook(1));
         System.out.println(service.getBook(1));
@@ -81,6 +91,17 @@ public class BookstoreServiceTest {
         System.out.println(service.getAuthor(1));
         verify(dao, only()).getAuthor(anyInt());
     }
+
+    @Test
+    public void testUpdateAuthorCache() throws Exception {
+        System.out.println(service.getAuthor(1));
+        System.out.println(service.getAuthor(1));
+        service.updateAuthor(1, "", DateTime.now(), DateTime.now());
+        System.out.println(service.getAuthor(1));
+        System.out.println(service.getAuthor(1));
+        verify(dao, times(2)).getAuthor(anyInt());
+    }
+
 
     @Test
     public void testDeleteAuthorCache() throws Exception {

@@ -89,6 +89,12 @@ public class BookstoreDaoTest {
         assertEquals(newAuthor, dao.getAuthor(author.getId()));
         dao.updateAuthor(author.getId(), author.getName(), author.getBirthDate(), author.getDeathDate());
         assertEquals(author, dao.getAuthor(author.getId()));
+        newAuthor = new DefaultAuthor(author.getId(), "new_name", new DateTime("1999-01-02"), new DateTime("2010-01-02"));
+        assertNotEquals(author, newAuthor);
+        dao.updateAuthor(author.getId(), newAuthor.getName(), newAuthor.getBirthDate(), newAuthor.getDeathDate());
+        assertEquals(newAuthor, dao.getAuthor(author.getId()));
+        dao.updateAuthor(author.getId(), author.getName(), author.getBirthDate(), author.getDeathDate());
+        assertEquals(author, dao.getAuthor(author.getId()));
     }
 
     @Test

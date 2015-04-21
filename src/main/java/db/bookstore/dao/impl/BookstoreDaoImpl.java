@@ -94,7 +94,7 @@ public class BookstoreDaoImpl implements BookstoreDao {
     @Override
     public void updateAuthor(int id, @NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
         jdbcTemplate.update("UPDATE AUTHORS SET NAME = ?, BIRTH_DATE = ?, DEATH_DATE = ? WHERE ID = ?",
-                name, new Date(birthDate.getMillis()), deathDate != null ? new Date(birthDate.getMillis()) : null, id);
+                name, new Date(birthDate.getMillis()), deathDate != null ? new Date(deathDate.getMillis()) : null, id);
     }
 
     @Override

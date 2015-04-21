@@ -66,6 +66,12 @@ public class BookstoreServiceImpl implements BookstoreService {
     }
 
     @Override
+    @CacheEvict(value = "authorCache", key = "#id")
+    public void updateAuthor(int id, @NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
+        dao.updateAuthor(id, name, birthDate, deathDate);
+    }
+
+    @Override
     @CacheEvict(value = "authorCache")
     public void deleteAuthor(int id) {
         dao.deleteAuthor(id);
@@ -109,6 +115,12 @@ public class BookstoreServiceImpl implements BookstoreService {
     @Cacheable(value = "bookCache")
     public Book getBook(int id) {
         return dao.getBook(id);
+    }
+
+    @Override
+    @CacheEvict(value = "bookCache", key = "#id")
+    public void updateBook(int id, @NotNull String name, double price, @NotNull DateTime publicationDate) {
+        dao.updateBook(id, name, price, publicationDate);
     }
 
     @Override
