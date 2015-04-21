@@ -1,7 +1,6 @@
 package db.bookstore.services.impl;
 
 import com.google.common.collect.Lists;
-import db.bookstore.annotations.Self;
 import db.bookstore.dao.Author;
 import db.bookstore.dao.Book;
 import db.bookstore.dao.BookstoreDao;
@@ -29,9 +28,6 @@ public class BookstoreServiceImpl implements BookstoreService {
 
     @Autowired
     private BookstoreDao dao;
-
-    @Self
-    private BookstoreServiceImpl self;
 
     @Override
     public void setDao(BookstoreDao dao) {
@@ -149,7 +145,7 @@ public class BookstoreServiceImpl implements BookstoreService {
     }
 
     private @NotNull List<Book> getFilteredAuthorsByAge(Comparator<Integer> ageComparator, int age) {
-        return self.getAllBooks().stream().filter(book ->
+        return getAllBooks().stream().filter(book ->
                 book.getAuthors().stream().allMatch(author ->
                         ageComparator.compare(getAge(author.getBirthDate(), author.getDeathDate()), age) > 0))
                 .collect(Collectors.toList());
@@ -157,17 +153,17 @@ public class BookstoreServiceImpl implements BookstoreService {
 
     @Override
     public @NotNull List<Book> getBooksOfAuthorsOlderThan(int age) {
-        return self.getFilteredAuthorsByAge(Comparator.<Integer>naturalOrder(), age);
+        return getFilteredAuthorsByAge(Comparator.<Integer>naturalOrder(), age);
     }
 
     @Override
     public @NotNull List<Book> getBooksOfAuthorsYoungerThan(int age) {
-        return self.getFilteredAuthorsByAge(Comparator.<Integer>reverseOrder(), age);
+        return getFilteredAuthorsByAge(Comparator.<Integer>reverseOrder(), age);
     }
 
     @Override
     public @NotNull List<Book> getBooksOfAliveAuthors() {
-        return self.getAllBooks().stream().filter(book ->
+        return getAllBooks().stream().filter(book ->
                 book.getAuthors().stream().anyMatch(author ->
                         author.getDeathDate() == null)).collect(Collectors.toList());
     }

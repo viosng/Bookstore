@@ -3,8 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-       <import resource="database-conf.xml"/>
-       <import resource="test-database-conf.xml"/>
+       <import resource="classpath:database-conf.xml"/>
+       <import resource="classpath:test-database-conf.xml"/>
 
        <bean scope="prototype" class="org.springframework.jdbc.core.simple.SimpleJdbcInsert">
               <constructor-arg type="javax.sql.DataSource" ref="myds"/>
