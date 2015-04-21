@@ -80,6 +80,32 @@ public class BookstoreDaoTest {
 
     @Test
     @Transactional
+    public void testUpdateAuthor() throws Exception {
+        Author author = dao.getAuthor(1101);
+        assertNotNull(author);
+        Author newAuthor = new DefaultAuthor(author.getId(), "new_name", new DateTime("1999-01-02"), null);
+        assertNotEquals(author, newAuthor);
+        dao.updateAuthor(author.getId(), newAuthor.getName(), newAuthor.getBirthDate(), newAuthor.getDeathDate());
+        assertEquals(newAuthor, dao.getAuthor(author.getId()));
+        dao.updateAuthor(author.getId(), author.getName(), author.getBirthDate(), author.getDeathDate());
+        assertEquals(author, dao.getAuthor(author.getId()));
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateBook() throws Exception {
+        Book book = dao.getBook(701);
+        assertNotNull(book);
+        Book newBook = new DefaultBook(book.getId(), "new_name", 123.0, new DateTime("1999-01-02"), book.getAuthors());
+        assertNotEquals(book, newBook);
+        dao.updateBook(book.getId(), newBook.getName(), newBook.getPrice(), newBook.getPublicationDate());
+        assertEquals(newBook, dao.getBook(book.getId()));
+        dao.updateBook(book.getId(), book.getName(), book.getPrice(), book.getPublicationDate());
+        assertEquals(book, dao.getBook(book.getId()));
+    }
+
+    @Test
+    @Transactional
     public void testGetBooksOfAuthor() throws Exception {
         Author author = dao.getAuthor(101);
         assertNotNull(author);

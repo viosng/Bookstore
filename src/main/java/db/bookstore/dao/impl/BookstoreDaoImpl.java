@@ -92,6 +92,12 @@ public class BookstoreDaoImpl implements BookstoreDao {
     }
 
     @Override
+    public void updateAuthor(int id, @NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate) {
+        jdbcTemplate.update("UPDATE AUTHORS SET NAME = ?, BIRTH_DATE = ?, DEATH_DATE = ? WHERE ID = ?",
+                name, new Date(birthDate.getMillis()), deathDate != null ? new Date(birthDate.getMillis()) : null, id);
+    }
+
+    @Override
     public void deleteAuthor(int id) {
         jdbcTemplate.execute("DELETE FROM AUTHORS WHERE ID = " + id);
     }
@@ -107,6 +113,12 @@ public class BookstoreDaoImpl implements BookstoreDao {
     public Book getBook(int id) {
         List<Book> books = getBooks(" WHERE BOOK_ID = " + id);
         return books.isEmpty() ? null : books.get(0);
+    }
+
+    @Override
+    public void updateBook(int id, @NotNull String name, double price, @NotNull DateTime publicationDate) {
+        jdbcTemplate.update("UPDATE BOOKS SET NAME = ?, PRICE = ?, PUBLICATION_DATE = ? WHERE ID = ?",
+                name, price, new Date(publicationDate.getMillis()), id);
     }
 
     @Override

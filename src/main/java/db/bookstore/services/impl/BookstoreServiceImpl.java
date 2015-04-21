@@ -34,6 +34,11 @@ public class BookstoreServiceImpl implements BookstoreService {
     private BookstoreServiceImpl self;
 
     @Override
+    public void setDao(BookstoreDao dao) {
+        this.dao = dao;
+    }
+
+    @Override
     @NotNull
     public Author addAuthor(@NotNull String name, @NotNull DateTime birthDate) {
         return dao.addAuthor(name, birthDate.withTime(0, 0, 0, 0), null);
@@ -61,6 +66,12 @@ public class BookstoreServiceImpl implements BookstoreService {
     }
 
     @Override
+    @CacheEvict(value = "authorCache")
+    public void deleteAuthor(int id) {
+        dao.deleteAuthor(id);
+    }
+
+    @Override
     @NotNull
     public Book addBook(@NotNull String name, double price, @NotNull DateTime publicationDate,
                         @NotNull Author author, @NotNull Author... authors) {
@@ -83,6 +94,12 @@ public class BookstoreServiceImpl implements BookstoreService {
     }
 
     @Override
+    @CacheEvict(value = "bookCache", key = "#book.getId()")
+    public void deleteAuthority(@NotNull Author author, @NotNull Book book) {
+        dao.deleteAuthority(author, book);
+    }
+
+    @Override
     public @NotNull List<Book> getAllBooks() {
         return dao.getAllBooks();
     }
@@ -92,6 +109,12 @@ public class BookstoreServiceImpl implements BookstoreService {
     @Cacheable(value = "bookCache")
     public Book getBook(int id) {
         return dao.getBook(id);
+    }
+
+    @Override
+    @CacheEvict(value = "bookCache")
+    public void deleteBook(int id) {
+        dao.deleteBook(id);
     }
 
     @Override

@@ -19,6 +19,8 @@ public interface BookstoreDao {
     @NotNull
     Author addAuthor(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate);
 
+    void updateAuthor(int id, @NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate);
+
     void deleteAuthor(int id);
 
     @NotNull
@@ -26,6 +28,8 @@ public interface BookstoreDao {
 
     @Nullable
     Book getBook(int id);
+
+    void updateBook(int id, @NotNull String name, double price, @NotNull DateTime publicationDate);
 
     void deleteBook(int id);
 
