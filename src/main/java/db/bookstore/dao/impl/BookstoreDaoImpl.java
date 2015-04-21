@@ -92,6 +92,11 @@ public class BookstoreDaoImpl implements BookstoreDao {
     }
 
     @Override
+    public void deleteAuthor(int id) {
+
+    }
+
+    @Override
     @NotNull
     public List<Book> getAllBooks() {
         return getBooks("");
@@ -102,6 +107,11 @@ public class BookstoreDaoImpl implements BookstoreDao {
     public Book getBook(int id) {
         List<Book> books = getBooks(" WHERE BOOK_ID = " + id);
         return books.isEmpty() ? null : books.get(0);
+    }
+
+    @Override
+    public void deleteBook(int id) {
+        jdbcTemplate.execute("DELETE FROM AUTHORS WHERE ID = " + id);
     }
 
     @Override

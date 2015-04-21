@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Tue Apr 21 18:09:59 MSK 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-014c-dc50-640e-00000657b740 
-on database directory C:\Users\StudentDB\IdeaProjects\Bookstore\test_bookstore with class loader sun.misc.Launcher$AppClassLoader@6d06d69c 
-Loaded from file:/C:/Users/StudentDB/.m2/repository/org/apache/derby/derby/10.11.1.1/derby-10.11.1.1.jar
+Tue Apr 21 20:28:25 MSK 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-014c-dd06-0c06-000002696938 
+on database directory C:\Users\vio\IdeaProjects\Bookstore\test_bookstore with class loader sun.misc.Launcher$AppClassLoader@2a139a55 
+Loaded from file:/C:/Users/vio/.m2/repository/org/apache/derby/derby/10.11.1.1/derby-10.11.1.1.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_25-b18
-user.dir=C:\Users\StudentDB\IdeaProjects\Bookstore
+java.runtime.version=1.8.0_40-b26
+user.dir=C:\Users\vio\IdeaProjects\Bookstore
 os.name=Windows 7
 os.arch=amd64
 os.version=6.1

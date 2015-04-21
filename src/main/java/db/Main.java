@@ -2,13 +2,14 @@ package db;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import db.configs.MainJavaConfig;
 import db.bookstore.dao.Author;
 import db.bookstore.dao.Book;
 import db.bookstore.services.BookstoreService;
+import db.configs.MainJavaConfig;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.AbstractEnvironment;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.setLevel(Level.DEBUG);
+        System.setProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, "dev");
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MainJavaConfig.class)) {
             BookstoreService service = context.getBean(BookstoreService.class);
             System.out.println("Start using bookstore");

@@ -1,12 +1,13 @@
 package db.bookstore.dao.impl;
 
-import db.bookstore.TestJavaConfig;
 import db.bookstore.dao.BookstoreDao;
+import db.configs.MainJavaConfig;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -17,7 +18,8 @@ import java.util.Collections;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestJavaConfig.class)
+@ContextConfiguration(classes = MainJavaConfig.class)
+@ActiveProfiles("test")
 public class BookstoreDaoTest {
 
     @Autowired
@@ -35,7 +37,7 @@ public class BookstoreDaoTest {
 
     @Test(expected = DuplicateKeyException.class)
     public void testAddAuthor() throws Exception {
-        dao.addAuthor("author1", new DateTime("2000-04-04"), null);
+        dao.addAuthor("author1", new DateTime("2000-04-05"), null);
     }
 
     @Test

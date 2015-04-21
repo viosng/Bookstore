@@ -19,11 +19,15 @@ public interface BookstoreDao {
     @NotNull
     Author addAuthor(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate);
 
+    void deleteAuthor(int id);
+
     @NotNull
     List<Book> getAllBooks();
 
     @Nullable
     Book getBook(int id);
+
+    void deleteBook(int id);
 
     @NotNull
     List<Book> getBooksOfAuthor(@NotNull Author author);
