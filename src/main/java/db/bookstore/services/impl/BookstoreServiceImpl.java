@@ -55,7 +55,7 @@ public class BookstoreServiceImpl implements BookstoreService {
 
     @Nullable
     @Override
-    @Cacheable(value = "authorCache", keyGenerator = "keyGenerator")
+    @Cacheable(value = "authorCache")
     public Author getAuthor(int id) {
         return dao.getAuthor(id);
     }
@@ -89,7 +89,7 @@ public class BookstoreServiceImpl implements BookstoreService {
 
     @Nullable
     @Override
-    @Cacheable(value = "bookCache", keyGenerator = "keyGenerator")
+    @Cacheable(value = "bookCache")
     public Book getBook(int id) {
         return dao.getBook(id);
     }

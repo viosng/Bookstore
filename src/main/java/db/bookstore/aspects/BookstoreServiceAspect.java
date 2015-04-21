@@ -22,12 +22,12 @@ public class BookstoreServiceAspect {
 
     @AfterReturning(pointcut = "execution(* db.bookstore.services.impl.BookstoreServiceImpl.addAuthor(..))", returning = "returnVal")
     public void addAuthor(JoinPoint pjp, Object returnVal) throws Throwable {
-        log.info("Added new author or returned an existing one :{}", returnVal);
+        log.info("Added new author :{}", returnVal);
     }
 
     @AfterReturning(pointcut = "execution(* db.bookstore.services.impl.BookstoreServiceImpl.addBook(..))", returning = "returnVal")
     public void addBook(JoinPoint pjp, Object returnVal) throws Throwable {
-        log.info("Added new book or returned an existing one : {}", returnVal);
+        log.info("Added new book : {}", returnVal);
     }
 
     @Around("execution(* db.bookstore.services.impl.BookstoreServiceImpl.get*(..))")
