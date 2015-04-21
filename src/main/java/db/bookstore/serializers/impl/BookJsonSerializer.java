@@ -1,8 +1,8 @@
 package db.bookstore.serializers.impl;
 
 import db.bookstore.dao.Book;
-import db.bookstore.dao.DefaultAuthor;
-import db.bookstore.dao.DefaultBook;
+import db.bookstore.dao.impl.DefaultAuthor;
+import db.bookstore.dao.impl.DefaultBook;
 import db.bookstore.serializers.Serializer;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;

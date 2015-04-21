@@ -1,7 +1,9 @@
-package db.bookstore.dao;
+package db.bookstore.dao.impl;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
+import db.bookstore.dao.Author;
+import db.bookstore.dao.Book;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 

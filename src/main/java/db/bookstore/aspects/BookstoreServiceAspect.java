@@ -1,6 +1,6 @@
 package db.bookstore.aspects;
 
-import db.bookstore.services.BookstoreService;
+import db.bookstore.services.impl.BookstoreServiceImpl;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -18,19 +18,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookstoreServiceAspect {
 
-    private final static Logger log = LoggerFactory.getLogger(BookstoreService.class);
+    private final static Logger log = LoggerFactory.getLogger(BookstoreServiceImpl.class);
 
-    @AfterReturning(pointcut = "execution(* db.bookstore.services.BookstoreService.addAuthor(..))", returning = "returnVal")
+    @AfterReturning(pointcut = "execution(* db.bookstore.services.impl.BookstoreServiceImpl.addAuthor(..))", returning = "returnVal")
     public void addAuthor(JoinPoint pjp, Object returnVal) throws Throwable {
         log.info("Added new author or returned an existing one :{}", returnVal);
     }
 
-    @AfterReturning(pointcut = "execution(* db.bookstore.services.BookstoreService.addBook(..))", returning = "returnVal")
+    @AfterReturning(pointcut = "execution(* db.bookstore.services.impl.BookstoreServiceImpl.addBook(..))", returning = "returnVal")
     public void addBook(JoinPoint pjp, Object returnVal) throws Throwable {
         log.info("Added new book or returned an existing one : {}", returnVal);
     }
 
-    @Around("execution(* db.bookstore.services.BookstoreService.get*(..))")
+    @Around("execution(* db.bookstore.services.impl.BookstoreServiceImpl.get*(..))")
     public Object getMethods(ProceedingJoinPoint pjp) throws Throwable {
         log.info("Execution of method {} is started", pjp.getSignature().getName());
         Object res = pjp.proceed();
