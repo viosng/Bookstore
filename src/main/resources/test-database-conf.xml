@@ -8,6 +8,6 @@
        <bean name="myds" class=
                "org.springframework.jdbc.datasource.DriverManagerDataSource">
               <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-              <property name="url" value="jdbc:derby:test_bookstore;"/>
+              <property name="url" value="jdbc:derby:C:\Users\StudentDB\IdeaProjects\Bookstore\test_bookstore;"/>
        </bean>
 </beans>

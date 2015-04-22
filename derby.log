@@ -1,18 +1,18 @@
 ----------------------------------------------------------------
-Wed Apr 22 03:02:16 MSK 2015:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-014c-de6e-9fed-000008300a10 
-on database directory C:\Users\vio\IdeaProjects\Bookstore\bookstore with class loader WebappClassLoader
+Wed Apr 22 11:42:27 MSK 2015:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-014c-e013-f520-000008350098 
+on database directory C:\Users\StudentDB\IdeaProjects\Bookstore\bookstore with class loader WebappClassLoader
   context: /library
   delegate: false
   repositories:
     /WEB-INF/classes/
 ----------> Parent Classloader:
-ClassRealm[plugin>org.apache.tomcat.maven:tomcat7-maven-plugin:2.2, parent: sun.misc.Launcher$AppClassLoader@6d06d69c]
+ClassRealm[plugin>org.apache.tomcat.maven:tomcat7-maven-plugin:2.2, parent: sun.misc.Launcher$AppClassLoader@4e25154f]
  
-Loaded from file:/C:/Users/vio/IdeaProjects/Bookstore/target/bookstore/WEB-INF/lib/derby-10.11.1.1.jar
+Loaded from file:/C:/Users/StudentDB/IdeaProjects/Bookstore/target/bookstore/WEB-INF/lib/derby-10.11.1.1.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_40-b26
-user.dir=C:\Users\vio\IdeaProjects\Bookstore
+java.runtime.version=1.8.0_25-b18
+user.dir=C:\Users\StudentDB\IdeaProjects\Bookstore
 os.name=Windows 7
 os.arch=amd64
 os.version=6.1
