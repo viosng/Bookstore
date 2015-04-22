@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class BookstoreServiceImpl implements BookstoreService {
 
-    @Autowired
     private BookstoreDao dao;
 
     @Override
+    @Autowired
     public void setDao(BookstoreDao dao) {
         this.dao = dao;
     }

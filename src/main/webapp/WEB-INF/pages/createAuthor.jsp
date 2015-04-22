@@ -8,11 +8,10 @@
     <c:if test="${authorIsAdded}">Author is added</c:if>
 </p>
 <form action="create" method="POST">
-    Author name: <input type="text" name="name">
-    <br/>
-    Birthdate: <input type="date" name="birthDate"/>
-    <br/>
-    Deathdate: <input type="date" name="deathDate"/>
+    <input hidden name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <label>Author name: <input type="text" name="name"></label>
+    <label>Birthdate: <input type="date" name="birthDate"/></label>
+    <label>Deathdate: <input type="date" name="deathDate"/></label>
     <input type="submit" value="Submit" />
 </form>
 </body>

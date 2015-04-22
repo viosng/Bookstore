@@ -14,19 +14,39 @@
     <title>${author.name} edit page</title>
 </head>
 <body>
-<table style="border: 1px solid black;" cellpadding="6" cellspacing="0">
+
+<a href="/author">To author list</a>
+<p>
+    <c:if test="${authorIsUpdated}">Author is added</c:if>
+</p>
+<form action="update" method="POST">
+    <input hidden name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <input hidden name="id" value="${author.id}"/>
+    <label>Author name: <input type="text" name="name" value="${author.name}"></label><br/>
+    <label>Birthdate: <input type="date" name="birthDate" value="<fmt:formatDate value="${author.birthDate.toDate()}" pattern="yyyy-MM-dd" />"/></label><br/>
+    <label>Deathdate: <input type="date" name="deathDate" value="<fmt:formatDate value="${author.deathDate.toDate()}" pattern="yyyy-MM-dd" />"/></label><br/>
+    <sec:authorize access="hasRole('ROLE_DBA')">
+        <input type="submit" value="Submit" />
+    </sec:authorize>
+</form>
+<p>Author books</p>
+<table style="border: 1px solid #5eb283;" cellpadding="6" cellspacing="0">
     <tr valign="baseline" bgcolor="#404060">
-        <th align="center"> ID</th>
+        <th align="center">ID</th>
         <th align="left">Name</th>
-        <th align="left">Birth date</th>
-        <th align="left">Death date</th>
+        <th align="left">Publication date</th>
+        <th align="left">Price</th>
+        <th align="left">View</th>
     </tr>
-    <tr>
-        <td align="center"> ${author.id} </td>
-        <td align="left"> ${author.name} </td>
-        <td align="left"> <fmt:formatDate value="${author.birthDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
-        <td align="left"> <fmt:formatDate value="${author.deathDate.toDate()}" pattern="MM-dd-yyyy" /> </td>
-    </tr>
+    <c:forEach var="book" items="${books}" varStatus="lineInfo">
+        <tr>
+            <td align="center"> ${book.id} </td>
+            <td align="left"> ${book.name} </td>
+            <td align="left"> <fmt:formatDate value="${book.publicationDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
+            <td align="left"> ${book.price} </td>
+            <td align="left"> <a href="/book/${book.id}">view</a>
+        </tr>
+    </c:forEach>
 </table>
 
 </body>

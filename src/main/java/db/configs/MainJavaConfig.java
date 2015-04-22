@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 @EnableTransactionManagement
 @ImportResource("classpath:library-conf.xml")
+@Import({ SecurityConfig.class })
 public class MainJavaConfig  {
     @Bean
     public static PropertySourcesPlaceholderConfigurer configurer() {
@@ -48,4 +49,5 @@ public class MainJavaConfig  {
     public ThreadPoolTaskScheduler taskScheduler() {
         return new ThreadPoolTaskScheduler();
     }
+
 }

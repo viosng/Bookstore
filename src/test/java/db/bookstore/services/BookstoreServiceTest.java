@@ -46,71 +46,70 @@ public class BookstoreServiceTest {
 
     @Test
     public void testGetBookCache() throws Exception {
-        System.out.println(service.getBook(1));
-        System.out.println(service.getBook(1));
-        System.out.println(service.getBook(1));
+        service.getBook(1);
+        service.getBook(1);
         verify(dao, only()).getBook(anyInt());
     }
 
     @Test
     public void testUpdateBookCache() throws Exception {
-        System.out.println(service.getBook(1));
-        System.out.println(service.getBook(1));
+        service.getBook(1);
+        service.getBook(1);
         service.updateBook(1, "", 1.0, DateTime.now());
-        System.out.println(service.getBook(1));
-        System.out.println(service.getBook(1));
+        service.getBook(1);
+        service.getBook(1);
         verify(dao, times(2)).getBook(anyInt());
     }
 
     @Test
     public void testDeleteBookCache() throws Exception {
-        System.out.println(service.getBook(1));
-        System.out.println(service.getBook(1));
+        service.getBook(1);
+        service.getBook(1);
         service.deleteBook(1);
-        System.out.println(service.getBook(1));
+        service.getBook(1);
         verify(dao, times(2)).getBook(anyInt());
     }
 
     @Test
     public void testAuthorityDeleteCache() throws Exception {
         Book book = new DefaultBook(1, "a", 1.0, DateTime.now(), Collections.emptySet());
-        System.out.println(service.getBook(1));
-        System.out.println(service.getBook(1));
+        service.getBook(1);
+        service.getBook(1);
         service.addAuthority(mock(Author.class), book);
-        System.out.println(service.getBook(1));
-        System.out.println(service.getBook(1));
+        service.getBook(1);
+        service.getBook(1);
         service.deleteAuthority(mock(Author.class), book);
-        System.out.println(service.getBook(1));
-        System.out.println(service.getBook(1));
+        service.getBook(1);
+        service.getBook(1);
         verify(dao, times(3)).getBook(anyInt());
     }
 
     @Test
     public void testGetAuthorCache() throws Exception {
-        System.out.println(service.getAuthor(1));
-        System.out.println(service.getAuthor(1));
-        System.out.println(service.getAuthor(1));
+        service.getAuthor(1);
+        service.getAuthor(1);
+        service.getAuthor(1);
         verify(dao, only()).getAuthor(anyInt());
     }
 
     @Test
     public void testUpdateAuthorCache() throws Exception {
-        System.out.println(service.getAuthor(1));
-        System.out.println(service.getAuthor(1));
+        service.getAuthor(1);
+        service.getAuthor(1);
         service.updateAuthor(1, "", DateTime.now(), DateTime.now());
-        System.out.println(service.getAuthor(1));
-        System.out.println(service.getAuthor(1));
+        service.getAuthor(1);
+        service.getAuthor(1);
         verify(dao, times(2)).getAuthor(anyInt());
     }
 
 
     @Test
     public void testDeleteAuthorCache() throws Exception {
-        System.out.println(service.getAuthor(1));
-        System.out.println(service.getAuthor(1));
+        service.getAuthor(1);
+        service.getAuthor(1);
         service.deleteAuthor(1);
-        System.out.println(service.getAuthor(1));
-        System.out.println(service.getAuthor(1));
+        service.getAuthor(1);
+        service.getAuthor(1);
         verify(dao, times(2)).getAuthor(anyInt());
     }
 }

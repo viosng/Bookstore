@@ -1,5 +1,6 @@
 package db.bookstore.controllers;
 
+import db.bookstore.dao.Author;
 import db.bookstore.services.BookstoreService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,26 @@ public class AuthorController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String showAuthor(@PathVariable int id, ModelMap model) {
-        model.addAttribute("author", bookstoreService.getAuthor(id));
+        Author author = bookstoreService.getAuthor(id);
+        if (author == null) {
+            return "authorNotFound";
+        }
+        model.addAttribute("author", author);
+        model.addAttribute("books", bookstoreService.getBooksOfAuthor(author));
         return "author";
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String updateAuthor(HttpServletRequest rq, ModelMap model) {
+        String deathDate = rq.getParameter("deathDate");
+        int id = Integer.parseInt(rq.getParameter("id"));
+        bookstoreService.updateAuthor(
+                id,
+                rq.getParameter("name"),
+                new DateTime(rq.getParameter("birthDate")),
+                deathDate.equals("") ? null : new DateTime(deathDate));
+        model.put("authorIsUpdated", true);
+        return showAuthor(id, model);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)

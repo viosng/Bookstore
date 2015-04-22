@@ -21,7 +21,7 @@
         <th align="left">Name</th>
         <th align="left">Birth date</th>
         <th align="left">Death date</th>
-        <th align="left">Edit link</th>
+        <th align="left">View</th>
     </tr>
     <c:forEach var="author" items="${authors}" varStatus="lineInfo">
         <tr>
@@ -29,7 +29,7 @@
             <td align="left"> ${author.name} </td>
             <td align="left"> <fmt:formatDate value="${author.birthDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
             <td align="left"> <fmt:formatDate value="${author.deathDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
-            <td align="left"> <a href="author/${author.id}">edit</a> </td>
+            <td align="left"> <a href="author/${author.id}">View</a> </td>
         </tr>
     </c:forEach>
 </table>

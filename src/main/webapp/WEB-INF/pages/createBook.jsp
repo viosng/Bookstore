@@ -3,34 +3,26 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <body>
+<a href="/book">To book list</a>
 <p>
-    <c:if test="${bookIsAdded}">Author is added</c:if>
+    <c:if test="${bookIsAdded}">Book is added</c:if>
 </p>
 <form action="create" method="POST">
-    Book Name: <input type="text" name="name" >
-    <br />
-    price: <input type="text" name="price"/>
-    <p>
-        <select size="3" multiple name="authors[]">
+    <input hidden name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <label>Book Name:<input type="text" name="name"></label><br />
+    <label>price:<input type="text" name="price"/></label><br />
+    <label>Publication date<input type="date" name="publicationDate"/></label><br />
+    <label>
+        <select size="3" multiple name="authors[]" title="Choose authors">
             <option disabled>Choose authors</option>
             <c:forEach var="author" items="${authors}" varStatus="lineInfo">
-                <option value="${author.id}">Чебурашка</option>
-                <tr>
-                    <td align="center"> ${author.id} </td>
-                    <td align="left"> ${author.name} </td>
-                    <td align="left"> ${author.birthDate.toDate()} </td>
-                    <td align="left"> <fmt:formatDate value="${author.birthDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
-                    <td align="left"> <fmt:formatDate value="${author.deathDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
-                </tr>
+                <option value="${author.id}">"${author.name}"</option>
             </c:forEach>
-            <option disabled>Выберите героя</option>
-            <option value="Чебурашка">Чебурашка</option>
-            <option selected value="Крокодил Гена">Крокодил Гена</option>
-            <option value="Шапокляк">Шапокляк</option>
-            <option value="Крыса Лариса">Крыса Лариса</option>
         </select>
-    </p>
-    <input type="submit" value="Submit" />
+    </label><br />
+    <label>
+        <input type="submit" value="Submit" />
+    </label>
 </form>
 </body>
 </html>

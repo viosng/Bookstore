@@ -19,8 +19,11 @@ public class MainController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String showMainPage(ModelMap model) {
-        model.addAttribute("message", "Hello");
-        model.addAttribute("books", bookstoreService.getAllBooks());
         return "index";
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String showLogout(ModelMap model) {
+        return "logout";
     }
 }
