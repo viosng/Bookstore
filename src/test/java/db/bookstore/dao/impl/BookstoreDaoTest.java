@@ -5,6 +5,7 @@ import db.bookstore.dao.Book;
 import db.bookstore.dao.BookstoreDao;
 import db.configs.MainJavaConfig;
 import org.joda.time.DateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import static org.junit.Assert.*;
  * Created by StudentDB on 21.04.2015.
  */
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MainJavaConfig.class)
 @ActiveProfiles("test")
