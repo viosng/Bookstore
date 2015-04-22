@@ -48,4 +48,6 @@ public interface BookstoreDao {
     void addAuthority(@NotNull Author author, @NotNull Book book);
 
     void deleteAuthority(@NotNull Author author, @NotNull Book book);
+
+    void clearData();
 }

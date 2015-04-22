@@ -199,4 +199,11 @@ public class BookstoreDaoImpl implements BookstoreDao {
     public void deleteAuthority(@NotNull Author author, @NotNull Book book) {
         jdbcTemplate.execute("DELETE FROM AUTHORITY WHERE BOOK_ID = " + book.getId() + " AND AUTHOR_ID = " + author.getId());
     }
+
+    @Override
+    public void clearData() {
+        jdbcTemplate.execute("DELETE FROM AUTHORITY");
+        jdbcTemplate.execute("DELETE FROM BOOKS");
+        jdbcTemplate.execute("DELETE FROM AUTHORS");
+    }
 }
