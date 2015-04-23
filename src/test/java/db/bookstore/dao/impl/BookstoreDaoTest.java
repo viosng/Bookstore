@@ -3,12 +3,16 @@ package db.bookstore.dao.impl;
 import db.bookstore.dao.Author;
 import db.bookstore.dao.Book;
 import db.bookstore.dao.BookstoreDao;
+import db.bookstore.services.SerializationService;
 import db.configs.MainJavaConfig;
 import org.joda.time.DateTime;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -16,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -26,10 +31,14 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MainJavaConfig.class)
 @ActiveProfiles("test")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BookstoreDaoTest {
 
     @Autowired
     private BookstoreDao dao;
+
+    @Autowired
+    private SerializationService serializationService;
 
     @Test
     @Transactional
@@ -149,4 +158,29 @@ public class BookstoreDaoTest {
         assertFalse(dao.getBooksOfAuthor(author).contains(book));
     }
 
+    @Test
+    @Transactional
+    public void testFindAuthorsByNamePrefix() throws Exception {
+        assertEquals(5, dao.findAuthorsByNamePrefix("auth").size());
+        assertEquals(5, dao.findAuthorsByNamePrefix("author").size());
+        assertEquals(1, dao.findAuthorsByNamePrefix("author1").size());
+    }
+
+    @Test
+    @Transactional
+    public void testFindBooksByNamePrefix() throws Exception {
+        assertEquals(4, dao.findBooksByNamePrefix("te").size());
+        assertEquals(4, dao.findBooksByNamePrefix("test").size());
+        assertEquals(1, dao.findBooksByNamePrefix("test1").size());
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void testzzzzzImport() throws Exception {
+        List<Book> allBooks = dao.getAllBooks();
+        serializationService.importFromJson();
+        List<Book> allBooks1 = dao.getAllBooks();
+        assertEquals(allBooks, allBooks1);
+    }
 }

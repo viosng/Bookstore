@@ -67,4 +67,10 @@ public class AuthorController {
         model.put("authorIsAdded", true);
         return "createAuthor";
     }
+
+    @RequestMapping(value = "/findAuthorByPrefix", method = RequestMethod.POST)
+    public String findAuthorByPrefix(HttpServletRequest rq, ModelMap model) {
+        model.addAttribute("authors", bookstoreService.findAuthorsByNamePrefix(rq.getParameter("prefix")));
+        return "authors";
+    }
 }

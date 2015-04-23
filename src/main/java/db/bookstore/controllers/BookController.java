@@ -101,4 +101,10 @@ public class BookController {
         model.put("bookIsAdded", true);
         return showCreatePage(model);
     }
+
+    @RequestMapping(value = "/findBookByPrefix", method = RequestMethod.POST)
+    public String findAuthorByPrefix(HttpServletRequest rq, ModelMap model) {
+        model.addAttribute("books", bookstoreService.findBooksByNamePrefix(rq.getParameter("prefix")));
+        return "books";
+    }
 }

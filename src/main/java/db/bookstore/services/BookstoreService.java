@@ -25,6 +25,9 @@ public interface BookstoreService {
     @NotNull
     List<Author> getAllAuthors();
 
+    @NotNull
+    List<Author> findAuthorsByNamePrefix(@NotNull String namePrefix);
+
     @Nullable
     Author getAuthor(int id);
 
@@ -45,6 +48,9 @@ public interface BookstoreService {
 
     @NotNull
     List<Book> getAllBooks();
+
+    @NotNull
+    List<Book> findBooksByNamePrefix(@NotNull String namePrefix);
 
     @Nullable
     Book getBook(int id);

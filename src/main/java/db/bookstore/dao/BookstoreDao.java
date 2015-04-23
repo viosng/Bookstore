@@ -17,6 +17,9 @@ public interface BookstoreDao {
     Author getAuthor(int id);
 
     @NotNull
+    List<Author> findAuthorsByNamePrefix(@NotNull String namePrefix);
+
+    @NotNull
     Author addAuthor(@NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate);
 
     void updateAuthor(int id, @NotNull String name, @NotNull DateTime birthDate, @Nullable DateTime deathDate);
@@ -28,6 +31,9 @@ public interface BookstoreDao {
 
     @Nullable
     Book getBook(int id);
+
+    @NotNull
+    List<Book> findBooksByNamePrefix(@NotNull String namePrefix);
 
     void updateBook(int id, @NotNull String name, double price, @NotNull DateTime publicationDate);
 

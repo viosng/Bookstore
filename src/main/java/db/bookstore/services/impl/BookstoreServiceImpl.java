@@ -54,6 +54,12 @@ public class BookstoreServiceImpl implements BookstoreService {
         return dao.getAllAuthors();
     }
 
+    @NotNull
+    @Override
+    public List<Author> findAuthorsByNamePrefix(@NotNull String namePrefix) {
+        return dao.findAuthorsByNamePrefix(namePrefix);
+    }
+
     @Nullable
     @Override
     @Cacheable(value = "authorCache")
@@ -104,6 +110,12 @@ public class BookstoreServiceImpl implements BookstoreService {
     @Override
     public @NotNull List<Book> getAllBooks() {
         return dao.getAllBooks();
+    }
+
+    @NotNull
+    @Override
+    public List<Book> findBooksByNamePrefix(@NotNull String namePrefix) {
+        return dao.findBooksByNamePrefix(namePrefix);
     }
 
     @Nullable

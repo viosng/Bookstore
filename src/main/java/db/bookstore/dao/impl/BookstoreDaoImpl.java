@@ -74,6 +74,14 @@ public class BookstoreDaoImpl implements BookstoreDao {
     }
 
     @NotNull
+    @Override
+    public List<Author> findAuthorsByNamePrefix(@NotNull String namePrefix) {
+        return jdbcTemplate.query("SELECT * FROM AUTHORS WHERE NAME LIKE ?",
+                new Object[]{namePrefix + "%"},
+                authorRowMapper("ID", "NAME", "BIRTH_DATE", "DEATH_DATE"));
+    }
+
+    @NotNull
     private List<Author> getAuthors(@NotNull String wherePart) {
         return jdbcTemplate.query("SELECT * FROM AUTHORS " + wherePart, authorRowMapper("ID", "NAME", "BIRTH_DATE", "DEATH_DATE"));
     }
@@ -105,14 +113,20 @@ public class BookstoreDaoImpl implements BookstoreDao {
     @Override
     @NotNull
     public List<Book> getAllBooks() {
-        return getBooks("");
+        return getBooks("SELECT * FROM BOOKSTORE_VIEW");
     }
 
     @Nullable
     @Override
     public Book getBook(int id) {
-        List<Book> books = getBooks(" WHERE BOOK_ID = " + id);
+        List<Book> books = getBooks("SELECT * FROM BOOKSTORE_VIEW WHERE BOOK_ID = ?", id);
         return books.isEmpty() ? null : books.get(0);
+    }
+
+    @NotNull
+    @Override
+    public List<Book> findBooksByNamePrefix(@NotNull String namePrefix) {
+        return getBooks("SELECT * FROM BOOKSTORE_VIEW WHERE BOOK_NAME LIKE ?", namePrefix + "%");
     }
 
     @Override
@@ -129,25 +143,25 @@ public class BookstoreDaoImpl implements BookstoreDao {
 
     @Override
     public @NotNull List<Book> getBooksOfAuthor(@NotNull Author author) {
-        return getBooks(" WHERE BOOK_ID IN (SELECT BOOK_ID FROM AUTHORITY WHERE AUTHOR_ID = " + author.getId() + ")");
+        return getBooks(
+                "SELECT * FROM BOOKSTORE_VIEW WHERE BOOK_ID IN (SELECT BOOK_ID FROM AUTHORITY WHERE AUTHOR_ID = ?)",
+                author.getId());
     }
 
     @Override
     public @NotNull List<Book> getBooksWithPriceMoreThan(double price) {
-        return getBooks(" WHERE BOOK_PRICE > " + price);
+        return getBooks("SELECT * FROM BOOKSTORE_VIEW WHERE BOOK_PRICE > ?", price);
     }
 
     @Override
     public @NotNull List<Book> getBooksWithPriceLessThan(double price) {
-        return getBooks(" WHERE BOOK_PRICE < " + price);
+        return getBooks("SELECT * FROM BOOKSTORE_VIEW WHERE BOOK_PRICE < ?", price);
     }
 
-    private List<Book> getBooks(String whereClause) {
-        String query = "SELECT * FROM BOOKSTORE_VIEW";
-        query += whereClause;
+    private List<Book> getBooks(String query, Object... args) {
         RowMapper<Author> authorRowMapper =
                 authorRowMapper("AUTHOR_ID", "AUTHOR_NAME", "AUTHOR_BIRTH_DATE", "AUTHOR_DEATH_DATE");
-        List<Pair<Book, Author>> resultSets = jdbcTemplate.query(query, (rs, rowNum) -> {
+        List<Pair<Book, Author>> resultSets = jdbcTemplate.query(query, args, (rs, rowNum) -> {
             Book book = new DefaultBook(
                     rs.getInt("BOOK_ID"),
                     rs.getString("BOOK_NAME"),

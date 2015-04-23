@@ -14,6 +14,7 @@
     <title>All books</title>
 </head>
 <body>
+<a href="/">To main page</a>
 <sec:authorize access="hasRole('ROLE_DBA')">
     <a href="book/create">create book</a>
 </sec:authorize>
@@ -31,7 +32,7 @@
             <td align="left"> ${book.name} </td>
             <td align="left"> <fmt:formatDate value="${book.publicationDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
             <td align="left"> ${book.price} </td>
-            <td align="left"> <a href="book/${book.id}">View</a> </td>
+            <td align="left"> <a href="/book/${book.id}">View</a> </td>
         </tr>
     </c:forEach>
 </table>

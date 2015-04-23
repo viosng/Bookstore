@@ -14,7 +14,10 @@
     <title>${message}</title>
 </head>
 <body>
-<a href="author/create">createAuthor</a>
+<a href="/">To main page</a>
+<sec:authorize access="hasRole('ROLE_DBA')">
+    <a href="author/create">create author</a>
+</sec:authorize>
 <table style="border: 1px solid black;" cellpadding="6" cellspacing="0">
     <tr valign="baseline" bgcolor="#404060">
         <th align="center"> ID</th>
@@ -29,7 +32,7 @@
             <td align="left"> ${author.name} </td>
             <td align="left"> <fmt:formatDate value="${author.birthDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
             <td align="left"> <fmt:formatDate value="${author.deathDate.toDate()}" pattern="yyyy-MM-dd" /> </td>
-            <td align="left"> <a href="author/${author.id}">View</a> </td>
+            <td align="left"> <a href="/author/${author.id}">View</a> </td>
         </tr>
     </c:forEach>
 </table>
