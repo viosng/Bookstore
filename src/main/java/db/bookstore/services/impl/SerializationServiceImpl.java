@@ -13,8 +13,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +43,14 @@ public class SerializationServiceImpl implements SerializationService {
         log.info("Dump task is finished");
     }
 
+    private <T> Map<T, T> getFromDatabase(Collection<T> elements, Function<T, T> getterFromDatabase) {
+        Map<T, T> resultMap = new HashMap<>();
+        for (T element : elements) {
+            resultMap.put(element, getterFromDatabase.apply(element));
+        }
+        return resultMap;
+    }
+
     @Override
     @Transactional
     public void importFromJson() {
@@ -50,12 +58,18 @@ public class SerializationServiceImpl implements SerializationService {
         jsonSerializer.serialize(allBooks, "data.json");
         dao.clearData();
         List<Book> deserializedBooks = jsonSerializer.deserialize("data.json");
-        Map<Author, Author> dbAuthors = deserializedBooks.stream().flatMap(b -> b.getAuthors().stream()).collect(Collectors.toSet())
-        for (Book deserializedBook : deserializedBooks) {
-            try {
-                dao.a
-            }
-        }
+        Map<Author, Author> dbAuthors = getFromDatabase(
+                deserializedBooks.stream().flatMap(b -> b.getAuthors().stream()).collect(Collectors.toSet()),
+                new Function<Author, Author>() {
+                    @Override
+                    public Author apply(Author t) {
+                        return dao.addAuthor(t.getName(), t.getBirthDate(), t.getDeathDate());
+                    }
+                });
+        Map<Book, Book> dbBooks= getFromDatabase(deserializedBooks,
+                t -> dao.addBook(t.getName(), t.getPrice(), t.getPublicationDate(), Collections.emptyList()));
+
+        deserializedBooks.forEach(b -> b.getAuthors().forEach(a -> dao.addAuthority(dbAuthors.get(a), dbBooks.get(b))));
 
     }
 

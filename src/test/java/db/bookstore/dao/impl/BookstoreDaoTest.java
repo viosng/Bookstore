@@ -5,7 +5,6 @@ import db.bookstore.dao.Book;
 import db.bookstore.dao.BookstoreDao;
 import db.configs.MainJavaConfig;
 import org.joda.time.DateTime;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import static org.junit.Assert.*;
  * Created by StudentDB on 21.04.2015.
  */
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MainJavaConfig.class)
 @ActiveProfiles("test")
@@ -36,7 +34,7 @@ public class BookstoreDaoTest {
     @Test
     @Transactional
     public void testGetAuthor() throws Exception {
-        assertEquals(new DefaultAuthor(101, "author1", new DateTime("2000-04-05"), null), dao.getAuthor(101));
+        assertEquals(new DefaultAuthor(101, "author1", new DateTime("2000-04-05"), null), dao.getAuthor(2603));
     }
 
     @Test(expected = DuplicateKeyException.class)
@@ -59,13 +57,13 @@ public class BookstoreDaoTest {
     @Test
     @Transactional
     public void testAddGetAndDeleteBook() throws Exception {
-        Author author1 = dao.getAuthor(1101);
+        Author author1 = dao.getAuthor(2601);
         assertNotNull(author1);
-        Author author2 = dao.getAuthor(1102);
+        Author author2 = dao.getAuthor(2604);
         assertNotNull(author2);
-        Author author3 = dao.getAuthor(1103);
+        Author author3 = dao.getAuthor(2605);
         assertNotNull(author3);
-        Book book = dao.addBook("new_book", 10.0, DateTime.now(), Arrays.asList(author1, author2, author3));
+        Book book = dao.addBook("new_book", 10.0, new DateTime("2000-01-01"), Arrays.asList(author1, author2, author3));
 
         assertEquals(book, dao.getBook(book.getId()));
         assertTrue(dao.getAllBooks().contains(book));
@@ -83,7 +81,7 @@ public class BookstoreDaoTest {
     @Test
     @Transactional
     public void testUpdateAuthor() throws Exception {
-        Author author = dao.getAuthor(1101);
+        Author author = dao.getAuthor(2604);
         assertNotNull(author);
         Author newAuthor = new DefaultAuthor(author.getId(), "new_name", new DateTime("1999-01-02"), null);
         assertNotEquals(author, newAuthor);
@@ -102,7 +100,7 @@ public class BookstoreDaoTest {
     @Test
     @Transactional
     public void testUpdateBook() throws Exception {
-        Book book = dao.getBook(701);
+        Book book = dao.getBook(2801);
         assertNotNull(book);
         Book newBook = new DefaultBook(book.getId(), "new_name", 123.0, new DateTime("1999-01-02"), book.getAuthors());
         assertNotEquals(book, newBook);
@@ -115,7 +113,7 @@ public class BookstoreDaoTest {
     @Test
     @Transactional
     public void testGetBooksOfAuthor() throws Exception {
-        Author author = dao.getAuthor(101);
+        Author author = dao.getAuthor(2601);
         assertNotNull(author);
         assertEquals(2, dao.getBooksOfAuthor(author).size());
     }
@@ -141,9 +139,9 @@ public class BookstoreDaoTest {
     @Test
     @Transactional
     public void testAddAndDeleteAuthority() throws Exception {
-        Book book = dao.getBook(701);
+        Book book = dao.getBook(2801);
         assertNotNull(book);
-        Author author = dao.getAuthor(101);
+        Author author = dao.getAuthor(2603);
         assertNotNull(author);
         dao.addAuthority(author, book);
         assertTrue(dao.getBooksOfAuthor(author).contains(book));
