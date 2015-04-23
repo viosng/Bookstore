@@ -3,7 +3,6 @@ package db.bookstore.services.impl;
 import db.bookstore.dao.Author;
 import db.bookstore.dao.Book;
 import db.bookstore.dao.BookstoreDao;
-import db.bookstore.serializers.Serializer;
 import db.bookstore.serializers.impl.BookJsonSerializer;
 import db.bookstore.services.SerializationService;
 import org.slf4j.Logger;
@@ -31,13 +30,10 @@ public class SerializationServiceImpl implements SerializationService {
     private BookstoreDao dao;
 
     @Value("${data-json-file}")
-    private String DATA_JSON = "data.json";
+    private String DATA_JSON;
 
     @Autowired
     private BookJsonSerializer jsonSerializer;
-
-    @Autowired
-    private List<Serializer<Book>> bookSerializers;
 
     @Scheduled(fixedDelay = 60000)
     @Override

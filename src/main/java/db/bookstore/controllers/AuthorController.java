@@ -73,4 +73,6 @@ public class AuthorController {
         model.addAttribute("authors", bookstoreService.findAuthorsByNamePrefix(rq.getParameter("prefix")));
         return "authors";
     }
+
+
 }
