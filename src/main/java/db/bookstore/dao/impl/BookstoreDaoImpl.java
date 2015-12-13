@@ -33,7 +33,6 @@ public class BookstoreDaoImpl implements BookstoreDao {
 
     @PostConstruct
     private void init() {
-        System.out.println("init");
         bookInsert = bookInsert
                 .withTableName("BOOKS")
                 .usingColumns("NAME", "PUBLICATION_DATE", "PRICE")
